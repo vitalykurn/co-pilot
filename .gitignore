@@ -1,0 +1,16 @@
+tmp/
+node_modules/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# per-ticket run logs are local; eval results are committed on purpose
+logs/*.jsonl

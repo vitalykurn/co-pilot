@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "support-copilot"
+version = "0.1.0"
+description = "Support-ticket co-pilot for a retail FX/CFD broker: classify, draft from the knowledge base with citations or abstain, route to a human."
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.5",
+    "beautifulsoup4>=4.12",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.40"]
+anthropic = ["anthropic>=0.40"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+include = ["copilot*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
