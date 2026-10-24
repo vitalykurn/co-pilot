@@ -16,6 +16,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
+from copilot.env import load_env
 from copilot.kb import KnowledgeBase, ROOT
 from copilot.pipeline import Copilot
 from copilot.providers import get_provider
@@ -23,8 +24,14 @@ from copilot.schema import Ticket
 
 
 def cmd_process(args: argparse.Namespace) -> int:
+    load_env()
     kb = KnowledgeBase.load()
-    provider = get_provider(args.provider, args.model)
+    extra = {}
+    if args.base_url:
+        extra["base_url"] = args.base_url
+    if args.api_key_env:
+        extra["api_key_env"] = args.api_key_env
+    provider = get_provider(args.provider, args.model, **extra)
     log = None if args.no_log else ROOT / "logs" / f"{date.today().isoformat()}.jsonl"
     copilot = Copilot(provider, kb, prompt_version=args.prompt, log_path=log)
 
@@ -85,7 +92,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--text")
     p.add_argument("--provider", default="mock", choices=["mock", "openai", "anthropic"])
     p.add_argument("--model")
-    p.add_argument("--prompt", default="draft_v1")
+    p.add_argument("--base-url", help="OpenAI-compatible endpoint, e.g. https://dashscope.aliyuncs.com/compatible-mode/v1")
+    p.add_argument("--api-key-env", help="env var holding the key for that endpoint (default OPENAI_API_KEY)")
+    p.add_argument("--prompt", default="draft_v2")
     p.add_argument("--brief", action="store_true", help="human-readable output instead of JSON")
     p.add_argument("--no-log", action="store_true")
     p.set_defaults(func=cmd_process)

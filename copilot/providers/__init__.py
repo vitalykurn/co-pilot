@@ -10,7 +10,8 @@ from __future__ import annotations
 from .base import LLMResponse, Provider
 
 
-def get_provider(name: str, model: str | None = None) -> Provider:
+def get_provider(name: str, model: str | None = None, **kwargs) -> Provider:
+    """kwargs are passed to the provider: `base_url`, `api_key_env` for OpenAI-compatible endpoints."""
     if name == "mock":
         from .mock import MockProvider
 
@@ -18,7 +19,7 @@ def get_provider(name: str, model: str | None = None) -> Provider:
     if name == "openai":
         from .openai_compat import OpenAICompatProvider
 
-        return OpenAICompatProvider(model=model or "gpt-4o-mini")
+        return OpenAICompatProvider(model=model or "gpt-4o-mini", **kwargs)
     if name == "anthropic":
         from .anthropic_provider import AnthropicProvider
 
