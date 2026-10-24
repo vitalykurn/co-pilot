@@ -87,6 +87,15 @@ def test_number_from_ticket_is_allowed():
     assert v.decision == "draft_ready"
 
 
+def test_list_numbering_is_not_an_uncited_number():
+    draft = "To deposit:\n1. Log in to your Member Area.\n2. Click Deposit and select a payment channel.\n3. Enter the amount."
+    cit = [Citation(page="how-to-deposit", quote="Click on the Deposit button and select your preferred payment channel")]
+    assert guard.uncited_numbers(draft, cit, "how do I deposit") == []
+    assert guard.uncited_numbers(draft + " It takes 3 days.", cit, "how do I deposit") == ["3"]
+    # literal backslash-n and parenthesised numbering, as some models emit them
+    assert guard.uncited_numbers("Steps:\\n1. Log in.\\n2. Click Deposit. \\(3) Enter the amount. (4) Done.", cit, "") == []
+
+
 def test_wrong_page_slug_is_corrected_not_dropped():
     out = _out(category="verification", draft="Verification is completed within 48 hours.", citations=[
         Citation(page="how-to-verify-account", quote="Account opening and document verification will be completed within 48 hours.")

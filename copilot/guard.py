@@ -83,6 +83,8 @@ HUMAN_ONLY_CATEGORIES = {"complaint", "kyc_aml"}
 SUPPORTED_LANGUAGES = {"en", "ru", "es", "id", "ar", "pt", "zh", "vi", "th", "ms", "tr", "fr", "de", "hi", "ur"}
 
 _NUMBER = re.compile(r"\d+(?:[.,:]\d+)*")
+# "1. step", "2) step", "(3) step": list numbering, not facts. Models also emit a literal "\n" before items.
+_LIST_MARKER = re.compile(r"(?:^|(?<=\s)|(?<=\\n)|(?<=\\\\)|(?<=\())\d{1,2}[.)]\)?\s")
 
 
 @dataclass
@@ -126,7 +128,7 @@ def uncited_numbers(draft: str, citations: list[Citation], ticket_text: str) -> 
     allowed = normalize(" ".join(c.quote for c in citations) + " " + ticket_text)
     allowed_numbers = set(_NUMBER.findall(allowed))
     missing = []
-    for n in _NUMBER.findall(draft):
+    for n in _NUMBER.findall(_LIST_MARKER.sub("", draft)):
         if n not in allowed_numbers and n.replace(",", ".") not in allowed_numbers:
             missing.append(n)
     return missing
