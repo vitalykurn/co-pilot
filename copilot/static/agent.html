@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support co-pilot: agent desk</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #fff; --ink: #1d2330; --muted: #667085; --line: #e3e6eb;
+    --ready: #1f7a4d; --ready-bg: #e5f4ec; --human: #9a5b00; --human-bg: #fdf1dc;
+    --declined: #3b4a6b; --declined-bg: #e6eaf3; --bad: #b42318; --bad-bg: #fde8e7;
+    --mark: #ffe58a; --accent: #2f5bd3;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--bg); }
+  header { padding: 14px 24px; background: var(--panel); border-bottom: 1px solid var(--line); display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+  h1 { margin: 0; font-size: 19px; }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 8px; }
+  .muted { color: var(--muted); font-size: 12px; }
+  .wrap { padding: 16px 24px 32px; display: grid; grid-template-columns: 380px 1fr; gap: 16px; align-items: start; }
+  .wrap > *, .right > * { min-width: 0; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+  .left { display: grid; gap: 16px; position: sticky; top: 12px; }
+  .right { display: grid; gap: 16px; }
+  textarea { width: 100%; min-height: 150px; resize: vertical; font: inherit; padding: 10px; border: 1px solid var(--line); border-radius: 6px; }
+  select, button { font: inherit; }
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+  .row select { flex: 1; min-width: 0; }
+  .send { background: var(--ink); color: #fff; border: 0; border-radius: 6px; padding: 7px 18px; cursor: pointer; }
+  .send:disabled { opacity: .5; cursor: wait; }
+  .examples { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ex { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 12px; text-align: left; }
+  .ex:hover { background: #f1f4fa; }
+  .ex b { font-weight: 600; margin-right: 4px; }
+  .hist { display: grid; gap: 4px; }
+  .hitem { border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; cursor: pointer; font-size: 12px; display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: center; }
+  .hitem:hover { background: #f1f4fa; }
+  .hitem.active { background: #e8eefc; }
+  .hitem .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .empty { color: var(--muted); font-style: italic; }
+  .badge { display: inline-block; font-weight: 600; font-size: 13px; padding: 4px 12px; border-radius: 4px; }
+  .badge.small { font-size: 11px; padding: 1px 6px; }
+  .badge.draft_ready { color: var(--ready); background: var(--ready-bg); }
+  .badge.needs_human { color: var(--human); background: var(--human-bg); }
+  .badge.declined { color: var(--declined); background: var(--declined-bg); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #eef1f5; color: #344054; }
+  .label { font-size: 12px; color: var(--muted); margin: 14px 0 4px; display: flex; justify-content: space-between; align-items: center; }
+  .draft { white-space: pre-wrap; background: #fafbfc; border: 1px solid var(--line); border-radius: 6px; padding: 12px; font-size: 15px; }
+  .copy { border: 1px solid var(--line); background: #fff; border-radius: 5px; padding: 2px 10px; cursor: pointer; font-size: 12px; }
+  .reasons code { font-size: 12px; background: #f2f4f7; padding: 1px 5px; border-radius: 3px; margin: 0 4px 4px 0; display: inline-block; }
+  .gap { background: var(--human-bg); color: var(--human); border-radius: 6px; padding: 8px 10px; }
+  .err { background: var(--bad-bg); color: var(--bad); border-radius: 6px; padding: 8px 10px; }
+  .cite { border-left: 3px solid var(--ready); padding: 4px 8px; margin: 6px 0; cursor: pointer; font-size: 13px; }
+  .cite:hover { background: #f6f8fb; }
+  .cite.bad { border-left-color: var(--bad); }
+  .cite .pg { font-size: 11px; color: var(--muted); }
+  details { margin-top: 12px; }
+  summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+  .note { font-size: 12px; color: var(--muted); margin-top: 12px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tab { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 13px; }
+  .tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .kb-body { white-space: pre-wrap; font: 13px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; max-height: 460px; overflow-y: auto; background: #fafbfc; border: 1px solid var(--line); border-radius: 6px; padding: 12px; }
+  mark { background: var(--mark); }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } .left { position: static; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Support co-pilot: agent desk</h1>
+  <span class="muted">Drafts only. The agent reviews and sends; the co-pilot never contacts the customer.</span>
+  <span class="muted" id="kbv"></span>
+</header>
+<div class="wrap">
+  <div class="left">
+    <section>
+      <h2>Incoming ticket</h2>
+      <textarea id="text" dir="auto" placeholder="Paste or type a customer ticket. Ctrl+Enter to send."></textarea>
+      <div class="row">
+        <select id="provider" title="Model configuration"></select>
+        <button class="send" id="send">Send</button>
+      </div>
+      <div class="muted" id="status" style="margin-top:6px"></div>
+    </section>
+    <section>
+      <h2>Examples from the eval set</h2>
+      <div class="examples" id="examples"></div>
+    </section>
+    <section>
+      <h2>This session</h2>
+      <div class="hist" id="history"><div class="empty">No tickets yet.</div></div>
+    </section>
+  </div>
+  <div class="right">
+    <section id="result"><h2>What the agent sees</h2><div class="empty">Send a ticket to see the decision, the draft and its citations.</div></section>
+    <section id="kb"></section>
+  </div>
+</div>
+<script>
+(function () {
+  "use strict";
+  const DECISIONS = { draft_ready: "Draft ready", needs_human: "Needs a human", declined: "Declined" };
+  const S = { providers: [], kb: [], history: [], current: null, page: null };
+  const $ = id => document.getElementById(id);
+
+  // Every string from the model or the ticket goes in through textContent.
+  function el(tag, attrs, ...kids) {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v === null || v === undefined || v === false) continue;
+      if (k === "class") n.className = v;
+      else if (k === "text") n.textContent = v;
+      else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? "" : v);
+    }
+    for (const k of kids.flat(Infinity)) if (k !== null && k !== undefined && k !== false) n.append(k instanceof Node ? k : String(k));
+    return n;
+  }
+
+  async function getJSON(url) {
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) throw new Error(url + " " + r.status);
+    return r.json();
+  }
+
+  async function init() {
+    const [prov, examples, kb] = await Promise.all([getJSON("/api/providers"), getJSON("/api/examples"), getJSON("/api/kb")]);
+    S.providers = prov.providers; S.kb = kb;
+    $("kbv").textContent = "KB version " + prov.kb_version;
+    $("provider").replaceChildren(...prov.providers.map(p => el("option", {
+      value: p.name, disabled: !p.available, selected: p.name === prov.default,
+      text: p.label + (p.available ? "" : " (unavailable: " + p.reason + ")"),
+    })));
+    $("examples").replaceChildren(...examples.map(e => el("button", {
+      class: "ex", title: e.text, onclick: () => { $("text").value = e.text; $("text").focus(); },
+    }, el("b", { text: e.ticket_id }), e.text.length > 46 ? e.text.slice(0, 46) + "…" : e.text)));
+    kbPane();
+  }
+
+  async function send() {
+    const text = $("text").value.trim();
+    const provider = $("provider").value;
+    if (!text) { $("status").textContent = "Type a ticket first."; return; }
+    $("send").disabled = true;
+    const t0 = performance.now();
+    const label = (S.providers.find(p => p.name === provider) || {}).label || provider;
+    const tick = setInterval(() => { $("status").textContent = label + " is working… " + ((performance.now() - t0) / 1000).toFixed(1) + " s"; }, 100);
+    try {
+      const r = await fetch("/api/process", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text, provider }) });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || ("HTTP " + r.status));
+      const item = { text, provider, label, result: data, at: new Date() };
+      S.history.unshift(item); S.history = S.history.slice(0, 10);
+      show(item);
+      $("status").textContent = "Done in " + ((performance.now() - t0) / 1000).toFixed(1) + " s.";
+    } catch (e) {
+      $("status").textContent = "";
+      $("result").replaceChildren(el("h2", { text: "What the agent sees" }), el("div", { class: "err", text: "Request failed: " + e.message }));
+    } finally {
+      clearInterval(tick);
+      $("send").disabled = false;
+    }
+  }
+
+  function citation(c, judged) {
+    return el("div", {
+      class: "cite" + (c.found_page ? "" : " bad"),
+      title: c.found_page ? "show on the KB page" : "this text is not on any KB page",
+      onclick: () => { if (c.found_page) { S.page = c.found_page; kbPane(); $("kb").scrollIntoView({ behavior: "smooth", block: "nearest" }); } },
+    },
+      el("div", { class: "pg" }, (c.found_page || c.page || "?") + (judged ? (c.found_page ? " · found in KB" : " · NOT in KB") : ""),
+        c.url ? [" · ", el("a", { href: c.url, target: "_blank", rel: "noopener", text: "open page", onclick: ev => ev.stopPropagation() })] : null),
+      el("div", { dir: "auto", text: "\u201c" + c.quote + "\u201d" }));
+  }
+
+  function show(item) {
+    S.current = item; S.page = null;
+    const r = item.result, cls = r.classification, u = r.usage;
+    const parts = [el("h2", { text: "What the agent sees" })];
+    parts.push(el("div", { class: "chips" },
+      el("span", { class: "badge " + r.decision, text: DECISIONS[r.decision] || r.decision }),
+      cls ? [el("span", { class: "chip", text: "category: " + cls.category }), el("span", { class: "chip", text: "urgency: " + cls.urgency }),
+             el("span", { class: "chip", text: "language: " + cls.language }), el("span", { class: "chip", text: "sentiment: " + cls.sentiment })]
+          : el("span", { class: "chip", text: "no classification" })));
+    if (r.draft) {
+      parts.push(el("div", { class: "label" }, el("span", { text: r.decision === "declined" ? "Fixed decline text (not generated)" : r.decision === "draft_ready" ? "Draft for the agent to review" : "Draft kept as a hint for the agent" }),
+        el("button", { class: "copy", text: "Copy draft", onclick: ev => copy(r.draft, ev.target) })));
+      parts.push(el("div", { class: "draft", dir: "auto", text: r.draft }));
+      if (r.kb_gap && r.decision !== "declined")
+        parts.push(el("div", { class: "gap", style: "margin-top:8px", text: "Not answered in the draft, the agent answers this: " + r.kb_gap }));
+    } else {
+      parts.push(el("div", { class: "label", text: "Draft" }));
+      parts.push(el("div", { class: "gap", text: "No draft. The ticket goes to a person." + (r.kb_gap ? " Knowledge base gap: " + r.kb_gap : "") }));
+    }
+    if (r.citations.length) parts.push(el("div", { class: "label", text: "Citations, each checked as a literal quote from the KB snapshot" }), r.citations.map(c => citation(c, false)));
+    parts.push(el("div", { class: "label", text: "Why this decision" }),
+      el("div", { class: "reasons" }, r.reasons.length ? r.reasons.map(x => el("code", { text: x })) : el("span", { class: "empty", text: "no rule fired" })));
+    if (r.model_draft && r.model_draft !== r.draft && r.decision !== "declined") {
+      parts.push(el("details", {}, el("summary", { text: "What the model wrote before the guard dropped it" }),
+        el("div", { class: "draft", dir: "auto", text: r.model_draft }), r.model_citations.map(c => citation(c, true))));
+    }
+    parts.push(el("div", { class: "note", text: [u.model, "prompt " + u.prompt_version, "KB " + u.kb_version, u.tokens_in + " in / " + u.tokens_out + " out tokens", "$" + u.cost_usd.toFixed(5), u.latency_ms + " ms"].join(" · ") }));
+    $("result").replaceChildren(...parts.flat(Infinity));
+    history();
+    kbPane();
+  }
+
+  function copy(text, btn) {
+    const done = () => { btn.textContent = "Copied"; setTimeout(() => { btn.textContent = "Copy draft"; }, 1200); };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, () => {});
+  }
+
+  function history() {
+    if (!S.history.length) return;
+    $("history").replaceChildren(...S.history.map(h => el("div", {
+      class: "hitem" + (h === S.current ? " active" : ""), title: h.label, onclick: () => { $("text").value = h.text; show(h); },
+    }, el("span", { class: "badge small " + h.result.decision, text: DECISIONS[h.result.decision] }), el("span", { class: "t", dir: "auto", text: h.text }))));
+  }
+
+  function kbPane() {
+    if (!S.kb.length) return;
+    const r = S.current && S.current.result;
+    const cites = r ? [...r.citations, ...(r.draft ? [] : r.model_citations)] : [];
+    if (!S.page) { const first = cites.find(c => c.found_page); S.page = first ? first.found_page : S.kb[0].slug; }
+    const page = S.kb.find(p => p.slug === S.page) || S.kb[0];
+    const spans = cites.filter(c => c.found_page === page.slug && c.span).map(c => c.span);
+    const flags = new Uint8Array(page.body.length);
+    for (const [s, e] of spans) for (let i = s; i < e; i++) flags[i] = 1;
+    const body = el("div", { class: "kb-body" });
+    let i = 0;
+    while (i < page.body.length) {
+      let j = i; while (j < page.body.length && flags[j] === flags[i]) j++;
+      const chunk = page.body.slice(i, j);
+      body.append(flags[i] ? el("mark", { text: chunk }) : document.createTextNode(chunk));
+      i = j;
+    }
+    const cited = new Set(cites.filter(c => c.found_page).map(c => c.found_page));
+    $("kb").replaceChildren(
+      el("h2", { text: "Knowledge base snapshot" }),
+      el("div", { class: "tabs" }, S.kb.map(p => el("button", { class: "tab" + (p.slug === page.slug ? " active" : ""), onclick: () => { S.page = p.slug; kbPane(); } },
+        p.slug + (cited.has(p.slug) ? " · cited" : "")))),
+      el("div", { class: "muted", style: "margin-bottom:8px" }, "Highlighted: text the draft cites · ", el("a", { href: page.url, target: "_blank", rel: "noopener", text: page.url })),
+      body);
+    const m = body.querySelector("mark");
+    if (m) body.scrollTop = Math.max(0, m.offsetTop - body.offsetTop - 40);
+  }
+
+  $("send").addEventListener("click", send);
+  $("text").addEventListener("keydown", ev => { if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) send(); });
+  init().catch(e => { $("status").textContent = "Could not load: " + e.message; });
+})();
+</script>
+</body>
+</html>

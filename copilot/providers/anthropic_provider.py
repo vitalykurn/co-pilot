@@ -19,7 +19,7 @@ class AnthropicProvider(Provider):
         self._client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"], max_retries=0, timeout=90)
 
     def complete(self, system: str, user: str, *, max_tokens: int = 1024) -> LLMResponse:
-        from anthropic import APIStatusError, RateLimitError
+        from anthropic import APIConnectionError, APIStatusError, RateLimitError
 
         # Current models reject `temperature` and reject an assistant prefill.
         # JSON is extracted from the text by the pipeline, fences included.
@@ -34,7 +34,7 @@ class AnthropicProvider(Provider):
                     messages=[{"role": "user", "content": user}],
                 )
                 break
-            except RateLimitError:
+            except (RateLimitError, APIConnectionError):  # includes timeouts
                 if attempt == attempts:
                     raise
             except APIStatusError as exc:

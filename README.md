@@ -46,6 +46,22 @@ cli: needs_human  [withdrawal/medium/en/neutral]
   kb_gap: The knowledge base does not state how long a withdrawal takes to be processed.
 ```
 
+## Try it in the browser
+
+```bash
+python cli.py serve --open   # http://127.0.0.1:8000/
+```
+
+A local agent-desk page around the same pipeline. Type or paste a ticket, choose Claude Sonnet 5.5, Qwen Max or the offline mock, and see what the support agent would see: the decision, the draft with a copy button, the citations highlighted on the KB page, the reasons, and the model's text when the guard dropped it. There is no send button, on purpose. Six buttons fill in eval tickets (the 24-hour trap, a trading signal, a cross-page answer, a KYC outcome, Arabic, an injection). Keys come from the environment or a local `api_key.env`; a model without a key is shown as unavailable. The server binds to `127.0.0.1` and accepts only local requests; it is a demo, not a hosted service.
+
+## Browse the results
+
+```bash
+python cli.py report     # writes docs/index.html from evals/results, the tickets and the KB snapshots
+```
+
+One self-contained HTML file, no server and no keys. It shows each eval ticket the way a support agent would see it: the decision, the draft, the citations highlighted on the KB page, the reasons, and, when the guard dropped a draft, what the model wrote before it. Two configurations sit side by side; it opens on T025 (the 24-hour trap) with Claude Sonnet 5.5 next to Qwen Max. Links like `index.html#T047` jump to a ticket. The page lives in `docs/` so it can be published with GitHub Pages (branch `main`, folder `/docs`). Rebuild it after any eval run or rescore.
+
 ## How a ticket flows
 
 ```
@@ -57,7 +73,9 @@ ticket ──► PII mask ──► LLM (system prompt = rules + the whole KB) �
                       every citation must be a literal substring of a KB page
                       every number in the draft must be in a citation or in the ticket
                       no advice-like language in the draft
+                      no promise of a later action, no mention of the knowledge base
                       complaint / KYC / AML ───────────────────────────────► needs_human
+                      partial answer (draft + kb_gap) ─────────────────────► needs_human
                       account-specific question, negative+high, unsupported language ─► needs_human
                                                                                  ▼
                                               optional: claim check (2nd narrow model call) ─► needs_human
@@ -65,27 +83,30 @@ ticket ──► PII mask ──► LLM (system prompt = rules + the whole KB) �
                                                                          draft_ready ──► agent
 ```
 
-Files: `copilot/schema.py` (contract), `prompts/draft_v2.md` (prompt; `draft_v1.md` kept for the before/after), `copilot/guard.py` (rules), `copilot/verifier.py` + `prompts/verify_v1.md` (optional claim check), `copilot/pipeline.py` (glue + log), `copilot/kb.py` (KB loader and the `find_quote` grounding check), `copilot/providers/` (mock, OpenAI-compatible, Anthropic).
+Files: `copilot/schema.py` (contract), `prompts/draft_v3.md` (prompt; `draft_v1.md` and `draft_v2.md` kept for the saved runs), `copilot/guard.py` (rules), `copilot/verifier.py` + `prompts/verify_v2.md` (optional claim check), `copilot/pipeline.py` (glue + log), `copilot/kb.py` (KB loader and the `find_quote` grounding check), `copilot/providers/` (mock, OpenAI-compatible, Anthropic).
 
 ## What the eval says
 
-58 labelled synthetic tickets, deterministic scoring. Qwen through the OpenAI-compatible DashScope endpoint, Claude through the Anthropic Messages API. Full numbers in `evals/results/*.metrics.json`; the per-ticket outputs, including what the model said before the guard, are in the `.json` files next to them.
+60 labelled synthetic tickets (the saved live runs cover the first 58), deterministic scoring. Qwen through the OpenAI-compatible DashScope endpoint, Claude through the Anthropic Messages API. Full numbers in `evals/results/*.metrics.json`; the per-ticket outputs, including what the model said before the guard, are in the `.json` files next to them.
 
 | Config | Model | Code guard | Claim check | Category acc | Decision acc | Abstain recall on KB gaps | Coverage (answerable) | Tickets with a wrong statement | $ / ticket |
 |---|---|---|---|---|---|---|---|---|---|
-| A | qwen-flash | off | off | 0.81 | 0.91 | 0.64 | 0.85 | 3 (incl. 1 invented citation) | 0.00018 |
-| B v1 | qwen-flash, prompt v1 | on | off | 0.91 | 0.90 | 0.43 | 0.92 | 3 | 0.00017 |
-| B | qwen-flash | on | off | 0.88 | 0.95 | 0.64 | 0.92 | 3 | 0.00019 |
-| C | qwen-max | on | off | 0.98 | 0.98 | 0.86 | 0.88 | 1 | 0.0048 |
-| **D** | **claude-sonnet-5-5** | **on** | **off** | **0.97** | **0.93** | **0.79** | **0.81** | **0** | **0.0107** |
+| A | qwen-flash | off | off | 0.81 | 0.90 | 0.64 | 0.85 | 6 (incl. 1 invented citation) | 0.00018 |
+| B v1 | qwen-flash, prompt v1 | on | off | 0.91 | 0.88 | 0.43 | 0.92 | 4 | 0.00017 |
+| B | qwen-flash | on | off | 0.88 | 0.93 | 0.64 | 0.92 | 4 | 0.00019 |
+| C | qwen-max | on | off | 0.98 | 0.97 | 0.86 | 0.88 | 4 | 0.0048 |
+| D | claude-sonnet-5-5 | on | off | 0.97 | 0.91 | 0.79 | 0.81 | 10 | 0.0107 |
 | E | qwen-flash (+ qwen-plus check) | on | on | 0.85 | 0.88 | 0.71 | 0.54 | 0 | 0.00029 |
-| F | qwen-max (+ qwen-plus check) | on | on | 0.98 | 0.90 | 0.86 | 0.50 | 0 | 0.0049 |
+| F | qwen-max (+ qwen-plus check) | on | on | 0.98 | 0.88 | 0.86 | 0.50 | 3 | 0.0049 |
+
+These live runs used prompt v2 and the guard as it was before follow-up promises were checked. The table is rescored against the current labels and scorer: a draft that promises the customer a later action ("our team will check", "we will get back to you", «мы уточним и сообщим») or mentions the knowledge base now counts as a wrong statement, and T028 (Skrill, half answerable) now expects a person. Nothing follows up on a sent draft, so such a promise is false. The current guard drops these drafts and sends partial answers to a person; applied offline to the same saved outputs, it moves coverage in scope from 67/69/62/60% to 62/64/57/38% for A/B/C/D. The two new partial-question tickets (T059, T060) are in the mock run only until the live configurations are re-run on prompt v3.
 
 Three things the numbers show:
 
-- **Prompt v1 → v2 was driven by the eval, not by taste.** The first live run declined factual product questions ("what is your maximum leverage") as trading advice and turned "contact support if not received within 24 hours" into a 24-hour delivery promise. v2 names both failure modes. Decision accuracy 0.88 → 0.95 and abstain recall on KB gaps 0.43 → 0.64 on the same model.
-- **The code guard cannot catch a misread quote.** The wrong statements that remain under the guard are valid citations used for a claim the quote does not make: "any preferred currency" as "we do not support crypto", "begin trading immediately" as "yes, you can trade unverified", and, on Qwen Max, the 24-hour contact-support sentence rewritten as "funds should be received within 24 hours". Quoting that sentence as the contact threshold is not counted. Sonnet (D) did the first and not the second, which is why its violation count is 0. Its two non-draft outcomes on answerable tickets were safe: one unparseable JSON, one draft dropped because it stated "48 hours" without citing that sentence.
-- **The claim check removes the misreads and half the drafts.** E and F reach 0 violations the way D does, by refusing correct translations along with the bad sentences. D gets there in one call.
+- **Prompt v1 → v2 was driven by the eval, not by taste.** The first live run declined factual product questions ("what is your maximum leverage") as trading advice and turned "contact support if not received within 24 hours" into a 24-hour delivery promise. v2 names both failure modes. Decision accuracy 0.88 → 0.93 and abstain recall on KB gaps 0.43 → 0.64 on the same model.
+- **The code guard cannot catch a misread quote.** The wrong statements that remain under the guard are valid citations used for a claim the quote does not make: "any preferred currency" as "we do not support crypto", "begin trading immediately" as "yes, you can trade unverified", and, on Qwen Max, the 24-hour contact-support sentence rewritten as "funds should be received within 24 hours". Quoting that sentence as the contact threshold is not counted. Sonnet (D) made none of these misreads. Its two non-draft outcomes on answerable tickets were safe: one unparseable JSON, one draft dropped because it stated "48 hours" without citing that sentence.
+- **Prompt v2 asked for the false promise.** Its rule for partly covered questions was "say plainly that the knowledge base does not state the rest and the team will check", and the claim check allowed "the team will check". Sonnet followed it most faithfully, so all 10 of D's wrong statements are follow-up promises or mentions of the knowledge base, 7 of them in drafts marked ready. Prompt v3 drops the rule, and the guard now enforces it in code.
+- **The claim check removes the misreads and half the drafts.** E reaches 0 violations by refusing correct translations along with the bad sentences. All 3 of F's are follow-up promises; the one in a ready draft passed the v1 claim check, which was told to allow "the team will check".
 - **Zero hard-rule violations across all configurations**: every trading-advice request was declined (including the one hidden in a prompt injection), every complaint and KYC case went to a person, no draft stated a KYC outcome.
 
 ## Decisions and why
@@ -102,7 +123,7 @@ Three things the numbers show:
 
 **The KB is used as-is, gaps included.** The withdrawal page is a copy of the deposit page and says nothing about processing time, minimum amount or fees; the verification page says nothing about documents or review time (those facts are on the account-opening page). The co-pilot abstains on the first set and cites the account-opening page for the second. Every abstain carries a one-sentence `kb_gap`, which is the KB backlog for the support lead.
 
-**Deterministic eval, no LLM judge for scoring.** 58 synthetic labelled tickets in `evals/tickets.jsonl`: 24 answerable (incl. cross-page answers and six languages), 14 KB gaps, 6 trading-advice requests (some disguised), 6 complaints/KYC, 4 prompt injections, 3 account-specific, 1 greeting. Scores: classification accuracy, abstain precision/recall on KB gaps, raw citation validity (before the guard), coverage, and violations judged on the final output (invalid citation, uncited number, advice language, a draft for a human-only case, or a forbidden phrase such as an invented timeline). Labels were corrected twice after reading live outputs; `--rescore` re-applies labels to saved outputs so a label fix never needs an API call.
+**Deterministic eval, no LLM judge for scoring.** 60 synthetic labelled tickets in `evals/tickets.jsonl`: 24 answerable (incl. cross-page answers and six languages), 16 KB gaps (two of them half answerable), 6 trading-advice requests (some disguised), 6 complaints/KYC, 4 prompt injections, 3 account-specific, 1 greeting. Scores: classification accuracy, abstain precision/recall on KB gaps, raw citation validity (before the guard), coverage, and violations judged on the final output (invalid citation, uncited number, advice language, a draft for a human-only case, a promise of a later action, a mention of the knowledge base, or a forbidden phrase such as an invented timeline). Labels were corrected twice after reading live outputs; `--rescore` re-applies labels to saved outputs so a label fix never needs an API call.
 
 **What was deliberately not built**: retrieval, a queue, a UI beyond the CLI, a ticket-system integration, tuning of the claim check. Each is a paragraph below, not code, because none of them changes the answer to "is this worth running" at 10k tickets/month.
 

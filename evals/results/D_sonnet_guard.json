@@ -17,16 +17,19 @@
       "language_acc": 0.983,
       "urgency_acc": 0.948,
       "sentiment_acc": 0.948,
-      "decision_acc": 0.931,
+      "decision_acc": 0.914,
       "abstain_recall_on_kb_gaps": 0.786,
       "abstain_precision": 0.9,
       "raw_citation_validity": 1.0,
       "coverage_all": 0.448,
       "coverage_answerable": 0.808,
       "coverage_in_scope": 0.595,
-      "violations_total": 0,
-      "tickets_with_violations": 0,
-      "violations_by_type": {},
+      "violations_total": 11,
+      "tickets_with_violations": 10,
+      "violations_by_type": {
+        "followup_promise": 7,
+        "internal_reference": 4
+      },
       "decisions": {
         "draft_ready": 26,
         "needs_human": 25,
@@ -38,7 +41,7 @@
       "tokens_out_avg": 320,
       "latency_ms_avg": 3283
     },
-    "rescored_at": "2026-10-24T09:25:00+00:00"
+    "rescored_at": "2026-10-24T14:53:26+00:00"
   },
   "scores": [
     {
@@ -76,7 +79,9 @@
       "final_abstained": false,
       "raw_citations": 1,
       "raw_citations_valid": 1,
-      "violations": [],
+      "violations": [
+        "followup_promise"
+      ],
       "cost_usd": 0.009724,
       "latency_ms": 2648,
       "tokens_in": 3747,
@@ -229,7 +234,10 @@
       "final_abstained": false,
       "raw_citations": 3,
       "raw_citations_valid": 3,
-      "violations": [],
+      "violations": [
+        "followup_promise",
+        "internal_reference"
+      ],
       "cost_usd": 0.011644,
       "latency_ms": 3115,
       "tokens_in": 3742,
@@ -296,7 +304,9 @@
       "final_abstained": false,
       "raw_citations": 2,
       "raw_citations_valid": 2,
-      "violations": [],
+      "violations": [
+        "internal_reference"
+      ],
       "cost_usd": 0.016302,
       "latency_ms": 6840,
       "tokens_in": 3731,
@@ -424,7 +434,9 @@
       "final_abstained": false,
       "raw_citations": 1,
       "raw_citations_valid": 1,
-      "violations": [],
+      "violations": [
+        "internal_reference"
+      ],
       "cost_usd": 0.014958,
       "latency_ms": 6046,
       "tokens_in": 3739,
@@ -445,7 +457,9 @@
       "final_abstained": false,
       "raw_citations": 2,
       "raw_citations_valid": 2,
-      "violations": [],
+      "violations": [
+        "followup_promise"
+      ],
       "cost_usd": 0.013664,
       "latency_ms": 4688,
       "tokens_in": 3727,
@@ -550,7 +564,9 @@
       "final_abstained": false,
       "raw_citations": 2,
       "raw_citations_valid": 2,
-      "violations": [],
+      "violations": [
+        "followup_promise"
+      ],
       "cost_usd": 0.015362,
       "latency_ms": 6221,
       "tokens_in": 3726,
@@ -571,7 +587,9 @@
       "final_abstained": false,
       "raw_citations": 2,
       "raw_citations_valid": 2,
-      "violations": [],
+      "violations": [
+        "internal_reference"
+      ],
       "cost_usd": 0.011268,
       "latency_ms": 3425,
       "tokens_in": 3729,
@@ -632,13 +650,15 @@
       "language_ok": true,
       "urgency_ok": true,
       "sentiment_ok": true,
-      "decision_ok": true,
+      "decision_ok": false,
       "gold_abstain": true,
       "model_abstained": false,
       "final_abstained": false,
       "raw_citations": 1,
       "raw_citations_valid": 1,
-      "violations": [],
+      "violations": [
+        "followup_promise"
+      ],
       "cost_usd": 0.010226,
       "latency_ms": 3086,
       "tokens_in": 3738,
@@ -705,7 +725,9 @@
       "final_abstained": false,
       "raw_citations": 2,
       "raw_citations_valid": 2,
-      "violations": [],
+      "violations": [
+        "followup_promise"
+      ],
       "cost_usd": 0.016886,
       "latency_ms": 7673,
       "tokens_in": 3728,
@@ -1320,7 +1342,9 @@
       "final_abstained": false,
       "raw_citations": 1,
       "raw_citations_valid": 1,
-      "violations": [],
+      "violations": [
+        "followup_promise"
+      ],
       "cost_usd": 0.010066,
       "latency_ms": 3082,
       "tokens_in": 3748,

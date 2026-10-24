@@ -155,6 +155,55 @@ def test_advice_language_in_draft_is_dropped():
     assert "draft_dropped:advice_language" in v.reasons
 
 
+OPEN_48H = "Account opening and document verification will be completed within 48 hours."
+SPEED_UP_RU = "Сколько занимает открытие счёта и проверка документов? Можно ли ускорить по запросу?"
+
+
+def test_followup_promise_and_kb_mention_drop_draft():
+    out = _out(category="verification", lang="ru", citations=[Citation(page="how-to-open-an-account", quote=OPEN_48H)], draft=(
+        "Здравствуйте! По нашей информации, открытие счёта и проверка документов завершаются в течение 48 часов. "
+        "В базе знаний нет информации о том, можно ли ускорить этот процесс по запросу. "
+        "Мы уточним это у команды и сообщим вам."
+    ))
+    v = guard.apply(_ticket(SPEED_UP_RU), out, KB)
+    assert v.decision == "needs_human"
+    assert v.draft is None
+    assert "draft_dropped:followup_promise" in v.reasons
+    assert "draft_dropped:internal_reference" in v.reasons
+
+
+def test_team_will_check_is_dropped():
+    out = _out(draft="You can select your preferred payment channel. Our team will check whether Skrill is available for you.",
+               citations=[Citation(page="how-to-deposit", quote="Click on the Deposit button and select your preferred payment channel")])
+    v = guard.apply(_ticket("Do you accept Skrill?"), out, KB)
+    assert v.decision == "needs_human"
+    assert "draft_dropped:followup_promise" in v.reasons
+
+
+def test_kb_facts_about_notifications_are_not_promises():
+    draft = "A pending status means your request is in the queue. Once approved, you will be notified. Please contact support if needed."
+    assert not guard.FOLLOWUP_PROMISE.search(draft)
+    assert not guard.INTERNAL_REF.search(draft)
+
+
+def test_partial_answer_goes_to_human_with_draft_as_hint():
+    out = _out(category="verification", lang="ru", draft="Здравствуйте! Открытие счёта и проверка документов завершаются в течение 48 часов.",
+               citations=[Citation(page="how-to-open-an-account", quote=OPEN_48H)])
+    out.kb_gap = "Можно ли ускорить проверку по запросу, не указано."
+    v = guard.apply(_ticket(SPEED_UP_RU), out, KB)
+    assert v.decision == "needs_human"
+    assert "partial_answer" in v.reasons
+    assert v.draft == out.draft
+
+
+def test_full_answer_without_kb_gap_is_still_ready():
+    out = _out(category="verification", draft="Account opening and document verification are completed within 48 hours.",
+               citations=[Citation(page="how-to-open-an-account", quote=OPEN_48H)])
+    v = guard.apply(_ticket("How long does verification take?"), out, KB)
+    assert v.decision == "draft_ready"
+    assert "partial_answer" not in v.reasons
+
+
 def test_invalid_model_output_is_soft_failure():
     v = guard.apply(_ticket(), None, KB)
     assert v.decision == "needs_human"

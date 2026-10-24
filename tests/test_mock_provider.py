@@ -30,6 +30,13 @@ def test_mock_abstains_on_kb_gap():
     assert out.kb_gap
 
 
+def test_mock_reports_the_uncovered_part_of_a_partial_question():
+    for text in ["How long does verification take, and can it be expedited?", "Сколько занимает проверка документов? Можно ли ускорить?"]:
+        out = _run(text)
+        assert out.draft and out.citations
+        assert out.kb_gap
+
+
 def test_mock_flags_trading_advice_and_complaints():
     assert _run("Which pair should I buy today? Give me a signal").classification.category == "trading_advice"
     assert _run("You stole my money, I will go to the regulator").classification.category == "complaint"

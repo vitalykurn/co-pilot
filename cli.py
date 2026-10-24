@@ -4,6 +4,8 @@
   python cli.py process tickets.jsonl --provider openai --model gpt-4o-mini
   python cli.py eval --config mock
   python cli.py kb
+  python cli.py report          # static page from saved results -> docs/index.html
+  python cli.py serve --open    # local agent-desk page on http://127.0.0.1:8000/
 
 Each ticket result is printed as JSON and appended to logs/<date>.jsonl.
 """
@@ -83,6 +85,37 @@ def cmd_kb(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_serve(args: argparse.Namespace) -> int:
+    from copilot.web import make_server
+
+    load_env()
+    server = make_server(args.host, args.port)
+    url = f"http://{args.host}:{server.server_address[1]}/"
+    for p in server.app.providers()["providers"]:
+        state = "ok" if p["available"] else f"off ({p['reason']})"
+        print(f"  {p['label']:36s} {state}")
+    print(f"agent desk on {url}  (Ctrl+C to stop)", flush=True)
+    if args.open:
+        import webbrowser
+
+        webbrowser.open(url)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
+    return 0
+
+
+def cmd_report(args: argparse.Namespace) -> int:
+    from evals.report import DEFAULT_OUT, build
+
+    out = build(args.out or DEFAULT_OUT)
+    print(f"wrote {out} ({out.stat().st_size // 1024} KB)")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="cli.py", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -94,7 +127,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--model")
     p.add_argument("--base-url", help="OpenAI-compatible endpoint, e.g. https://dashscope.aliyuncs.com/compatible-mode/v1")
     p.add_argument("--api-key-env", help="env var holding the key for that endpoint (default OPENAI_API_KEY)")
-    p.add_argument("--prompt", default="draft_v2")
+    p.add_argument("--prompt", default="draft_v3")
     p.add_argument("--brief", action="store_true", help="human-readable output instead of JSON")
     p.add_argument("--no-log", action="store_true")
     p.set_defaults(func=cmd_process)
@@ -106,6 +139,16 @@ def main(argv: list[str] | None = None) -> int:
 
     k = sub.add_parser("kb", help="show KB snapshot versions")
     k.set_defaults(func=cmd_kb)
+
+    s = sub.add_parser("serve", help="local agent-desk page: type a ticket, see the decision, draft and citations")
+    s.add_argument("--host", default="127.0.0.1", help="interface to bind (default 127.0.0.1, local only)")
+    s.add_argument("--port", type=int, default=8000)
+    s.add_argument("--open", action="store_true", help="open the page in the default browser")
+    s.set_defaults(func=cmd_serve)
+
+    r = sub.add_parser("report", help="build the static eval explorer page from saved results")
+    r.add_argument("--out", type=Path, help="output file (default docs/index.html)")
+    r.set_defaults(func=cmd_report)
 
     args = ap.parse_args(argv)
     return args.func(args)

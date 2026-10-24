@@ -19,3 +19,5 @@ jobs:
       - run: python cli.py eval --config mock
       # Prompt or guard drift shows up here as a changed mock result file.
       - run: git diff --exit-code -- evals/results/mock.metrics.json
+      # The results page must still build from the committed results. Build only, nothing is deployed.
+      - run: python cli.py report --out /tmp/report.html

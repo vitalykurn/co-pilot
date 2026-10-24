@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support co-pilot: eval explorer</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #fff; --ink: #1d2330; --muted: #667085; --line: #e3e6eb;
+    --ready: #1f7a4d; --ready-bg: #e5f4ec; --human: #9a5b00; --human-bg: #fdf1dc;
+    --declined: #3b4a6b; --declined-bg: #e6eaf3; --bad: #b42318; --bad-bg: #fde8e7;
+    --mark-a: #ffe58a; --mark-b: #b9dcff; --accent: #2f5bd3;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--bg); }
+  header { padding: 18px 24px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  h1 { margin: 0 0 6px; font-size: 20px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 8px; }
+  .rec { margin: 0 0 6px; max-width: 1100px; }
+  .meta { color: var(--muted); font-size: 12px; }
+  .meta a { color: var(--accent); }
+  section, aside { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+  .wrap { padding: 16px 24px 32px; display: grid; gap: 16px; }
+  /* Grid children default to min-width:auto; the no-wrap metrics table would widen the whole page. */
+  .wrap > *, .main > *, .cols > *, #detail > * { min-width: 0; }
+  #metrics { padding: 12px 14px; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: #f1f4fa; }
+  tr.is-primary td:first-child { box-shadow: inset 4px 0 0 #e0b400; }
+  tr.is-compare td:first-child { box-shadow: inset 4px 0 0 #3d8bfd; }
+  .zero { color: var(--ready); font-weight: 600; }
+  .nonzero { color: var(--bad); font-weight: 600; }
+  .main { display: grid; grid-template-columns: 320px 1fr; gap: 16px; align-items: start; }
+  aside { padding: 12px; position: sticky; top: 12px; max-height: calc(100vh - 24px); display: flex; flex-direction: column; }
+  .filters { display: grid; gap: 6px; margin-bottom: 8px; font-size: 13px; }
+  .filters select { width: 100%; }
+  #list { overflow-y: auto; border-top: 1px solid var(--line); }
+  .item { padding: 7px 6px; border-bottom: 1px solid var(--line); cursor: pointer; display: grid; grid-template-columns: 44px 1fr auto; gap: 6px; align-items: center; }
+  .item:hover { background: #f1f4fa; }
+  .item.active { background: #e8eefc; }
+  .item .tid { font-weight: 600; font-size: 12px; }
+  .item .txt { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dots { display: flex; gap: 3px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.draft_ready { background: var(--ready); } .dot.needs_human { background: #e0a000; } .dot.declined { background: var(--declined); }
+  .dot.viol { outline: 2px solid var(--bad); outline-offset: 1px; }
+  .count { color: var(--muted); font-size: 12px; padding: 4px 0; }
+  #detail { display: grid; gap: 16px; }
+  .card { padding: 14px; }
+  .ticket-text { font-size: 16px; margin: 6px 0 10px; white-space: pre-wrap; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #eef1f5; color: #344054; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .col { padding: 14px; border-top: 4px solid #e0b400; }
+  .col.compare { border-top-color: #3d8bfd; }
+  .col-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .col-head select { flex: 1; }
+  .badge { display: inline-block; font-weight: 600; font-size: 12px; padding: 3px 10px; border-radius: 4px; }
+  .badge.draft_ready { color: var(--ready); background: var(--ready-bg); }
+  .badge.needs_human { color: var(--human); background: var(--human-bg); }
+  .badge.declined { color: var(--declined); background: var(--declined-bg); }
+  .ok { color: var(--ready); font-size: 12px; } .miss { color: var(--bad); font-size: 12px; font-weight: 600; }
+  .label { font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
+  .draft { white-space: pre-wrap; background: #fafbfc; border: 1px solid var(--line); border-radius: 6px; padding: 10px; }
+  .nodraft { color: var(--muted); font-style: italic; }
+  .reasons code { font-size: 12px; background: #f2f4f7; padding: 1px 5px; border-radius: 3px; margin: 0 4px 4px 0; display: inline-block; }
+  .viols { color: var(--bad); background: var(--bad-bg); border-radius: 6px; padding: 8px 10px; font-size: 13px; }
+  .cite { border-left: 3px solid var(--line); padding: 4px 8px; margin: 6px 0; cursor: pointer; font-size: 13px; }
+  .cite:hover { background: #f6f8fb; }
+  .cite .pg { font-size: 11px; color: var(--muted); }
+  .cite.bad { border-left-color: var(--bad); }
+  .cite.good { border-left-color: var(--ready); }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+  #kb { padding: 14px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tab { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 13px; }
+  .tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .tab .n { font-size: 11px; opacity: .7; margin-left: 4px; }
+  .kb-body { white-space: pre-wrap; font: 13px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; max-height: 520px; overflow-y: auto; background: #fafbfc; border: 1px solid var(--line); border-radius: 6px; padding: 12px; }
+  mark.a { background: var(--mark-a); } mark.b { background: var(--mark-b); } mark.ab { background: linear-gradient(var(--mark-a) 50%, var(--mark-b) 50%); }
+  .legend { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .legend span { padding: 0 6px; border-radius: 3px; }
+  @media (max-width: 1200px) { .main { grid-template-columns: 260px 1fr; } }
+  @media (max-width: 900px) { .main, .cols { grid-template-columns: 1fr; } aside { position: static; max-height: none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Support co-pilot: eval explorer</h1>
+  <p class="rec" id="rec"></p>
+  <div class="meta" id="meta"></div>
+</header>
+<div class="wrap">
+  <section id="metrics">
+    <h2 id="metrics-title">Configurations</h2>
+    <table>
+      <thead><tr>
+        <th>Config</th><th>Model</th><th>Code guard</th><th>Claim check</th>
+        <th class="num">Wrong statements</th><th class="num">Decision acc</th><th class="num">Abstain on KB gaps</th>
+        <th class="num">Draft where KB answers</th><th class="num">$ / month</th><th class="num">Agent hours saved / month</th>
+      </tr></thead>
+      <tbody id="metrics-body"></tbody>
+    </table>
+    <div class="meta" style="margin-top:8px">Click a row to make it the left (yellow) column. Choose the right (blue) column in its drop-down. $ and hours use the assumptions in evals/assumptions.yaml at 10,000 tickets/month.</div>
+  </section>
+  <div class="main">
+    <aside>
+      <div class="filters">
+        <label>Group <select id="f-group"></select></label>
+        <label><input type="checkbox" id="f-diff"> only where the two configs decide differently</label>
+        <label><input type="checkbox" id="f-viol"> only tickets with a wrong statement</label>
+      </div>
+      <div class="count" id="count"></div>
+      <div id="list"></div>
+    </aside>
+    <div id="detail">
+      <section class="card" id="ticket"></section>
+      <div class="cols">
+        <section class="col" id="col-a"></section>
+        <section class="col compare" id="col-b"></section>
+      </div>
+      <section id="kb"></section>
+    </div>
+  </div>
+</div>
+<script id="report-data" type="application/json">/*__REPORT_DATA__*/null</script>
+<script>
+(function () {
+  "use strict";
+  const D = JSON.parse(document.getElementById("report-data").textContent);
+  const GROUPS = {
+    answerable: "Answerable from the KB", kb_gap: "KB gap", trading_advice: "Trading advice",
+    human_only: "Complaint / KYC / AML", injection: "Prompt injection", account_lookup: "Account-specific",
+  };
+  const DECISIONS = { draft_ready: "draft ready", needs_human: "needs human", declined: "declined" };
+  const S = { primary: D.default_primary, compare: D.default_compare, ticket: D.default_ticket, page: null };
+  const cfgByName = Object.fromEntries(D.configs.map(c => [c.name, c]));
+  const kbBySlug = Object.fromEntries(D.kb.map(p => [p.slug, p]));
+
+  // Every string from the data goes in through textContent: four tickets are prompt injections.
+  function el(tag, attrs, ...kids) {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v === null || v === undefined || v === false) continue;
+      if (k === "class") n.className = v;
+      else if (k === "text") n.textContent = v;
+      else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? "" : v);
+    }
+    for (const k of kids.flat()) if (k !== null && k !== undefined && k !== false) n.append(k instanceof Node ? k : String(k));
+    return n;
+  }
+  const short = name => name.split("_")[0] + (name.endsWith("_v1") ? " v1" : "");
+  const pct = x => (x === null || x === undefined) ? "-" : x.toFixed(2);
+  const money = x => "$" + (x < 10 ? x.toFixed(2) : Math.round(x).toLocaleString("en-US"));
+  const asList = v => Array.isArray(v) ? v : [v];
+  const run = (cfg, tid) => (D.runs[cfg] || {})[tid];
+
+  function header() {
+    document.getElementById("rec").textContent = D.recommendation;
+    document.getElementById("metrics-title").textContent = "Configurations, " + D.tickets.length + " labelled tickets";
+    const m = document.getElementById("meta");
+    m.append("KB version " + D.kb_version + " · " + D.tickets.length + " tickets · ",
+      el("a", { href: D.repo_url, text: "repository" }), " · ",
+      el("a", { href: D.repo_url + "/blob/main/BUSINESS_CASE.md", text: "business case" }), " · ",
+      el("a", { href: D.repo_url + "/blob/main/kb/KB_AUDIT.md", text: "KB audit" }));
+  }
+
+  function metrics() {
+    const body = document.getElementById("metrics-body");
+    body.replaceChildren(...D.configs.map(c => {
+      const m = c.metrics, wrong = m.tickets_with_violations ?? m.violations_total;
+      const model = c.model + (c.verifier_model ? " + " + c.verifier_model + " check" : "") + (c.prompt_version === "draft_v1" ? " (prompt v1)" : "");
+      return el("tr", {
+        class: (c.name === S.primary ? "is-primary" : "") + (c.name === S.compare ? " is-compare" : ""),
+        title: c.description, onclick: () => { if (c.name !== S.compare) { S.primary = c.name; renderAll(); } },
+      },
+        el("td", { text: short(c.name) }), el("td", { text: model }),
+        el("td", { text: c.code_guard ? "on" : "off" }), el("td", { text: c.claim_check ? "on" : "off" }),
+        el("td", { class: "num " + (wrong ? "nonzero" : "zero"), text: String(wrong) }),
+        el("td", { class: "num", text: pct(m.decision_acc) }),
+        el("td", { class: "num", text: pct(m.abstain_recall_on_kb_gaps) }),
+        el("td", { class: "num", text: pct(m.coverage_answerable) }),
+        el("td", { class: "num", text: money(c.business.llm_cost_usd) }),
+        el("td", { class: "num", text: c.business.hours_saved_per_month.toLocaleString("en-US") }));
+    }));
+  }
+
+  function filters() {
+    const g = document.getElementById("f-group");
+    g.append(el("option", { value: "", text: "All" }));
+    const present = [...new Set(D.tickets.map(t => t.expected.group))];
+    for (const k of Object.keys(GROUPS)) if (present.includes(k)) g.append(el("option", { value: k, text: GROUPS[k] }));
+    for (const id of ["f-group", "f-diff", "f-viol"]) document.getElementById(id).addEventListener("change", list);
+  }
+
+  function visible() {
+    const g = document.getElementById("f-group").value;
+    const diff = document.getElementById("f-diff").checked;
+    const viol = document.getElementById("f-viol").checked;
+    return D.tickets.filter(t => {
+      const a = run(S.primary, t.ticket_id), b = run(S.compare, t.ticket_id);
+      if (g && t.expected.group !== g) return false;
+      if (diff && a && b && a.decision === b.decision) return false;
+      if (viol && !((a && a.violations.length) || (b && b.violations.length))) return false;
+      return true;
+    });
+  }
+
+  function dot(r) { return el("span", { class: "dot " + (r ? r.decision : "") + (r && r.violations.length ? " viol" : ""), title: r ? DECISIONS[r.decision] : "no result" }); }
+
+  function list() {
+    const items = visible();
+    document.getElementById("count").textContent = items.length + " of " + D.tickets.length + " tickets · yellow / blue dot = left / right config";
+    document.getElementById("list").replaceChildren(...items.map(t => el("div", {
+      class: "item" + (t.ticket_id === S.ticket ? " active" : ""), onclick: () => select(t.ticket_id),
+    },
+      el("span", { class: "tid", text: t.ticket_id }),
+      el("span", { class: "txt", dir: "auto", text: t.text }),
+      el("span", { class: "dots" }, dot(run(S.primary, t.ticket_id)), dot(run(S.compare, t.ticket_id))))));
+  }
+
+  function select(tid) {
+    S.ticket = tid; S.page = null;
+    if (location.hash !== "#" + tid) history.replaceState(null, "", "#" + tid);
+    list(); detail();
+  }
+
+  function ticketCard(t) {
+    const e = t.expected;
+    document.getElementById("ticket").replaceChildren(
+      el("h2", { text: t.ticket_id + " · " + (GROUPS[e.group] || e.group) }),
+      el("div", { class: "ticket-text", dir: "auto", text: t.text }),
+      el("div", { class: "chips" },
+        el("span", { class: "chip", text: "expected decision: " + asList(e.decision).map(d => DECISIONS[d] || d).join(" or ") }),
+        el("span", { class: "chip", text: "category: " + asList(e.category).join(" / ") }),
+        el("span", { class: "chip", text: "language: " + e.language }),
+        e.abstain ? el("span", { class: "chip", text: "KB does not answer this" }) : null,
+        e.pages ? el("span", { class: "chip", text: "valid pages: " + e.pages.join(", ") }) : null));
+  }
+
+  function citation(c, which, judged) {
+    const page = c.found_page || c.page;
+    return el("div", {
+      class: "cite" + (judged ? (c.found_page ? " good" : " bad") : ""),
+      onclick: () => { if (c.found_page) { S.page = c.found_page; kbPane(); document.getElementById("kb").scrollIntoView({ behavior: "smooth", block: "nearest" }); } },
+      title: c.found_page ? "show on the KB page" : "this text is not on any KB page",
+    },
+      el("div", { class: "pg", text: (page || "?") + (judged ? (c.found_page ? " · found in KB" : " · NOT in KB") : "") }),
+      el("div", { dir: "auto", text: "\u201c" + c.quote + "\u201d" }));
+  }
+
+  function column(id, which, cfgName, otherName) {
+    const node = document.getElementById(id);
+    const sel = el("select", { onchange: ev => { S[which] = ev.target.value; renderAll(); } },
+      D.configs.filter(c => c.name !== otherName).map(c => el("option", { value: c.name, selected: c.name === cfgName, text: short(c.name) + " · " + c.model })));
+    const r = run(cfgName, S.ticket);
+    const t = D.tickets.find(x => x.ticket_id === S.ticket);
+    const parts = [el("div", { class: "col-head" }, sel)];
+    if (!r) { node.replaceChildren(...parts, el("div", { class: "nodraft", text: "No result for this ticket." })); return; }
+    const okExpected = asList(t.expected.decision).includes(r.decision);
+    parts.push(el("div", { class: "chips" },
+      el("span", { class: "badge " + r.decision, text: DECISIONS[r.decision] }),
+      el("span", { class: okExpected ? "ok" : "miss", text: okExpected ? "matches label" : "label expected: " + asList(t.expected.decision).map(d => DECISIONS[d] || d).join(" or ") }),
+      r.classification ? el("span", { class: "chip", text: [r.classification.category, r.classification.urgency, r.classification.language, r.classification.sentiment].join(" / ") }) : el("span", { class: "chip", text: "no classification" })));
+    if (r.violations.length) parts.push(el("div", { class: "label", text: "Wrong statement in what the agent would see" }),
+      el("div", { class: "viols", text: r.violations.join("; ") }));
+    parts.push(el("div", { class: "label", text: r.decision === "declined" ? "Fixed decline text" : "Draft for the agent" }));
+    parts.push(r.draft ? el("div", { class: "draft", dir: "auto", text: r.draft }) : el("div", { class: "nodraft", text: "No draft." + (r.kb_gap ? " KB gap: " + r.kb_gap : "") }));
+    if (r.citations.length) parts.push(el("div", { class: "label", text: "Citations (verified against the KB snapshot)" }), r.citations.map(c => citation(c, which, false)));
+    parts.push(el("div", { class: "label", text: "Reasons" }), el("div", { class: "reasons" }, r.reasons.length ? r.reasons.map(x => el("code", { text: x })) : el("span", { class: "nodraft", text: "none" })));
+    const dropped = r.model_draft && r.model_draft !== r.draft && r.decision !== "declined";
+    if (dropped) parts.push(el("details", {},
+      el("summary", { text: "What the model wrote before the guard" }),
+      el("div", { class: "draft", dir: "auto", text: r.model_draft }),
+      r.model_citations.map(c => citation(c, which, true))));
+    parts.push(el("div", { class: "meta", style: "margin-top:10px", text: "$" + r.cost_usd.toFixed(5) + " · " + r.latency_ms + " ms" }));
+    node.replaceChildren(...parts.flat());
+  }
+
+  function spansFor(cfgName, slug) {
+    const r = run(cfgName, S.ticket);
+    if (!r) return [];
+    return [...r.citations, ...(r.draft ? [] : r.model_citations)].filter(c => c.found_page === slug && c.span).map(c => c.span);
+  }
+
+  function kbPane() {
+    const node = document.getElementById("kb");
+    const ra = run(S.primary, S.ticket), rb = run(S.compare, S.ticket);
+    const cited = s => spansFor(S.primary, s).length + spansFor(S.compare, s).length;
+    if (!S.page) {
+      const first = [...((ra && ra.citations) || []), ...((rb && rb.citations) || [])].find(c => c.found_page);
+      S.page = first ? first.found_page : D.kb[0].slug;
+    }
+    const page = kbBySlug[S.page];
+    const tabs = el("div", { class: "tabs" }, D.kb.map(p => el("button", {
+      class: "tab" + (p.slug === S.page ? " active" : ""), onclick: () => { S.page = p.slug; kbPane(); },
+    }, p.slug, cited(p.slug) ? el("span", { class: "n", text: "· cited" }) : null)));
+    const flags = new Uint8Array(page.body.length);
+    for (const [s, e] of spansFor(S.primary, page.slug)) for (let i = s; i < e; i++) flags[i] |= 1;
+    for (const [s, e] of spansFor(S.compare, page.slug)) for (let i = s; i < e; i++) flags[i] |= 2;
+    const body = el("div", { class: "kb-body" });
+    let i = 0;
+    while (i < page.body.length) {
+      let j = i; while (j < page.body.length && flags[j] === flags[i]) j++;
+      const chunk = page.body.slice(i, j), f = flags[i];
+      body.append(f ? el("mark", { class: f === 1 ? "a" : f === 2 ? "b" : "ab", text: chunk }) : document.createTextNode(chunk));
+      i = j;
+    }
+    node.replaceChildren(
+      el("h2", { text: "Knowledge base snapshot" }),
+      el("div", { class: "legend" }, "Highlighted: ", el("span", { style: "background:var(--mark-a)", text: "cited by " + short(S.primary) }), " ",
+        el("span", { style: "background:var(--mark-b)", text: "cited by " + short(S.compare) }), " · ",
+        el("a", { href: page.url, target: "_blank", rel: "noopener", text: page.url })),
+      tabs, body);
+    const firstMark = body.querySelector("mark");
+    if (firstMark) body.scrollTop = Math.max(0, firstMark.offsetTop - body.offsetTop - 40);
+  }
+
+  function detail() {
+    const t = D.tickets.find(x => x.ticket_id === S.ticket) || D.tickets[0];
+    S.ticket = t.ticket_id;
+    ticketCard(t);
+    column("col-a", "primary", S.primary, S.compare);
+    column("col-b", "compare", S.compare, S.primary);
+    kbPane();
+  }
+
+  // A config change can move the citations to another page, so the KB pane re-picks it.
+  function renderAll() { S.page = null; metrics(); list(); detail(); }
+
+  header(); filters();
+  const fromHash = location.hash.slice(1);
+  if (fromHash && D.tickets.some(t => t.ticket_id === fromHash)) S.ticket = fromHash;
+  window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (h && h !== S.ticket && D.tickets.some(t => t.ticket_id === h)) select(h); });
+  renderAll();
+})();
+</script>
+</body>
+</html>

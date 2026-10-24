@@ -74,6 +74,13 @@ _RULES: list[tuple[str, str, str | None, str | None, str | None]] = [
         "Account opening and document verification will be completed within 48 hours.",
         "Account opening and document verification are completed within 48 hours.",
     ),
+    (
+        r"(сколько|как долго|срок).*(открыти\w* сч[её]т|проверк\w* документ|верификац)|(открыти\w* сч[её]т|проверк\w* документ|верификац).*(сколько|как долго|срок)",
+        "verification",
+        "how-to-open-an-account",
+        "Account opening and document verification will be completed within 48 hours.",
+        "Здравствуйте! Открытие счёта и проверка документов завершаются в течение 48 часов.",
+    ),
     (r"\b(verif\w+|kyc)\b", "verification", None, None, None),
     (
         r"\b(open|create|register|sign up)\b.*\baccount\b",
@@ -97,6 +104,8 @@ _ACCOUNT_LOOKUP = re.compile(
     r"(not|hasn't|has not) (arrived|updated|showed|shown)|nothing has arrived|only \$?\d+ showed|still pending|was rejected)\b",
     re.I | re.S,
 )
+# A second question the KB does not answer, asked next to one it does: draft the first, report the second.
+_PARTIAL = re.compile(r"\b(speed (it |this )?up|expedit\w*|faster)\b|ускор\w*", re.I)
 _CYRILLIC = re.compile(r"[\u0400-\u04ff]")
 _ARABIC = re.compile(r"[\u0600-\u06ff]")
 _SPANISH = re.compile(r"[¿¡]|\b(hola|cuál|dónde|puedo|retirar|cuenta)\b", re.I)
@@ -129,6 +138,10 @@ class MockProvider(Provider):
         else:
             language = "en"
         negative = bool(_NEGATIVE.search(user)) or category in ("complaint", "kyc_aml")
+        if draft:
+            kb_gap = "KB does not say whether this can be sped up on request." if _PARTIAL.search(user) else None
+        else:
+            kb_gap = None if category in ("trading_advice", "complaint", "kyc_aml") else "KB does not cover this question."
         out = {
             "classification": {
                 "category": category,
@@ -138,7 +151,7 @@ class MockProvider(Provider):
             },
             "draft": draft,
             "citations": [{"page": page, "quote": quote}] if quote else [],
-            "kb_gap": None if draft or category in ("trading_advice", "complaint", "kyc_aml") else "KB does not cover this question.",
+            "kb_gap": kb_gap,
             "requires_account_lookup": bool(_ACCOUNT_LOOKUP.search(user)) and category in ("deposit", "withdrawal"),
         }
         text = json.dumps(out, ensure_ascii=False)

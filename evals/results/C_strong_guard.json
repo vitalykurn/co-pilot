@@ -19,17 +19,19 @@
       "language_acc": 1.0,
       "urgency_acc": 0.897,
       "sentiment_acc": 0.966,
-      "decision_acc": 0.983,
+      "decision_acc": 0.966,
       "abstain_recall_on_kb_gaps": 0.857,
       "abstain_precision": 0.909,
       "raw_citation_validity": 1.0,
       "coverage_all": 0.466,
       "coverage_answerable": 0.885,
       "coverage_in_scope": 0.619,
-      "violations_total": 2,
-      "tickets_with_violations": 1,
+      "violations_total": 6,
+      "tickets_with_violations": 4,
       "violations_by_type": {
-        "forbidden_phrase": 2
+        "followup_promise": 2,
+        "forbidden_phrase": 2,
+        "internal_reference": 2
       },
       "decisions": {
         "draft_ready": 27,
@@ -42,7 +44,7 @@
       "tokens_out_avg": 114,
       "latency_ms_avg": 3831
     },
-    "rescored_at": "2026-10-24T09:25:00+00:00"
+    "rescored_at": "2026-10-24T14:53:26+00:00"
   },
   "scores": [
     {
@@ -231,7 +233,9 @@
       "final_abstained": false,
       "raw_citations": 1,
       "raw_citations_valid": 1,
-      "violations": [],
+      "violations": [
+        "followup_promise"
+      ],
       "cost_usd": 0.004934,
       "latency_ms": 4010,
       "tokens_in": 2536,
@@ -635,13 +639,16 @@
       "language_ok": true,
       "urgency_ok": true,
       "sentiment_ok": true,
-      "decision_ok": true,
+      "decision_ok": false,
       "gold_abstain": true,
       "model_abstained": false,
       "final_abstained": false,
       "raw_citations": 1,
       "raw_citations_valid": 1,
-      "violations": [],
+      "violations": [
+        "followup_promise",
+        "internal_reference"
+      ],
       "cost_usd": 0.005046,
       "latency_ms": 7316,
       "tokens_in": 2534,
@@ -731,7 +738,9 @@
       "final_abstained": false,
       "raw_citations": 1,
       "raw_citations_valid": 1,
-      "violations": [],
+      "violations": [
+        "internal_reference"
+      ],
       "cost_usd": 0.00521,
       "latency_ms": 6563,
       "tokens_in": 2532,

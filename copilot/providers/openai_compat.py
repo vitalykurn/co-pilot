@@ -24,7 +24,7 @@ class OpenAICompatProvider(Provider):
         self._client = OpenAI(api_key=api_key, base_url=base_url or os.environ.get("OPENAI_BASE_URL"), max_retries=2, timeout=90)
 
     def complete(self, system: str, user: str, *, max_tokens: int = 1024) -> LLMResponse:
-        from openai import APIStatusError, RateLimitError
+        from openai import APIConnectionError, APIStatusError, RateLimitError
 
         t0 = time.perf_counter()
         attempts, delay = 5, 2.0
@@ -38,7 +38,7 @@ class OpenAICompatProvider(Provider):
                     messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
                 )
                 break
-            except RateLimitError:
+            except (RateLimitError, APIConnectionError):  # includes timeouts
                 if attempt == attempts:
                     raise
             except APIStatusError as exc:

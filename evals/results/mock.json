@@ -8,33 +8,33 @@
       "verify_citations": true,
       "verify_numbers": true
     },
-    "prompt_version": "draft_v2",
+    "prompt_version": "draft_v3",
     "kb_version": "4ef110224808",
-    "run_at": "2026-10-24T09:25:01+00:00",
+    "run_at": "2026-10-24T14:56:51+00:00",
     "metrics": {
-      "tickets": 58,
-      "category_acc": 0.724,
+      "tickets": 60,
+      "category_acc": 0.733,
       "language_acc": 1.0,
-      "urgency_acc": 0.724,
-      "sentiment_acc": 0.914,
-      "decision_acc": 0.845,
+      "urgency_acc": 0.733,
+      "sentiment_acc": 0.917,
+      "decision_acc": 0.85,
       "abstain_recall_on_kb_gaps": 1.0,
       "abstain_precision": 0.5,
       "raw_citation_validity": 1.0,
-      "coverage_all": 0.224,
+      "coverage_all": 0.217,
       "coverage_answerable": 0.462,
-      "coverage_in_scope": 0.286,
+      "coverage_in_scope": 0.273,
       "violations_total": 0,
       "tickets_with_violations": 0,
       "violations_by_type": {},
       "decisions": {
         "draft_ready": 13,
-        "needs_human": 38,
+        "needs_human": 40,
         "declined": 7
       },
       "cost_usd_total": 0.0,
       "cost_usd_per_ticket": 0.0,
-      "tokens_in_avg": 1953,
+      "tokens_in_avg": 2039,
       "tokens_out_avg": 32,
       "latency_ms_avg": 0
     }
@@ -56,8 +56,8 @@
       "raw_citations_valid": 1,
       "violations": [],
       "cost_usd": 0.0,
-      "latency_ms": 3,
-      "tokens_in": 1947,
+      "latency_ms": 4,
+      "tokens_in": 2033,
       "tokens_out": 43,
       "reasons": []
     },
@@ -78,7 +78,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 1,
-      "tokens_in": 1960,
+      "tokens_in": 2046,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -101,7 +101,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -124,7 +124,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -147,7 +147,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1951,
+      "tokens_in": 2037,
       "tokens_out": 47,
       "reasons": []
     },
@@ -168,7 +168,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1949,
+      "tokens_in": 2035,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -191,7 +191,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 60,
       "reasons": [
         "account_lookup_required"
@@ -214,7 +214,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1957,
+      "tokens_in": 2043,
       "tokens_out": 54,
       "reasons": [
         "account_lookup_required"
@@ -237,7 +237,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1958,
+      "tokens_in": 2044,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -260,7 +260,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1949,
+      "tokens_in": 2035,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -283,7 +283,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1949,
+      "tokens_in": 2035,
       "tokens_out": 54,
       "reasons": []
     },
@@ -304,7 +304,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1952,
+      "tokens_in": 2038,
       "tokens_out": 54,
       "reasons": [
         "account_lookup_required"
@@ -327,7 +327,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1950,
+      "tokens_in": 2036,
       "tokens_out": 55,
       "reasons": []
     },
@@ -348,7 +348,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1952,
+      "tokens_in": 2038,
       "tokens_out": 52,
       "reasons": []
     },
@@ -369,7 +369,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1947,
+      "tokens_in": 2033,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -392,7 +392,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1951,
+      "tokens_in": 2037,
       "tokens_out": 55,
       "reasons": []
     },
@@ -413,7 +413,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1952,
+      "tokens_in": 2038,
       "tokens_out": 73,
       "reasons": []
     },
@@ -434,7 +434,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1951,
+      "tokens_in": 2037,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -457,7 +457,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1950,
+      "tokens_in": 2036,
       "tokens_out": 73,
       "reasons": []
     },
@@ -478,7 +478,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 73,
       "reasons": []
     },
@@ -499,7 +499,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -522,7 +522,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1950,
+      "tokens_in": 2036,
       "tokens_out": 73,
       "reasons": []
     },
@@ -543,7 +543,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1951,
+      "tokens_in": 2037,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -566,7 +566,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1949,
+      "tokens_in": 2035,
       "tokens_out": 73,
       "reasons": []
     },
@@ -587,7 +587,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1951,
+      "tokens_in": 2037,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -610,7 +610,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1948,
+      "tokens_in": 2034,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -633,7 +633,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1948,
+      "tokens_in": 2034,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -656,7 +656,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1954,
+      "tokens_in": 2040,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -679,7 +679,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1950,
+      "tokens_in": 2036,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -702,7 +702,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -725,7 +725,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1951,
+      "tokens_in": 2037,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -748,7 +748,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1951,
+      "tokens_in": 2037,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -771,7 +771,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1948,
+      "tokens_in": 2034,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -794,7 +794,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1956,
+      "tokens_in": 2042,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -817,7 +817,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 17,
       "reasons": [
         "hard_rule:trading_advice"
@@ -840,7 +840,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 17,
       "reasons": [
         "hard_rule:trading_advice"
@@ -863,7 +863,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1954,
+      "tokens_in": 2040,
       "tokens_out": 22,
       "reasons": [
         "hard_rule:trading_advice",
@@ -887,7 +887,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1952,
+      "tokens_in": 2038,
       "tokens_out": 17,
       "reasons": [
         "hard_rule:trading_advice"
@@ -910,7 +910,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1952,
+      "tokens_in": 2038,
       "tokens_out": 17,
       "reasons": [
         "hard_rule:trading_advice"
@@ -933,7 +933,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 22,
       "reasons": [
         "hard_rule:trading_advice",
@@ -957,7 +957,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1959,
+      "tokens_in": 2045,
       "tokens_out": 17,
       "reasons": [
         "kb_gap",
@@ -981,7 +981,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -1004,7 +1004,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1955,
+      "tokens_in": 2041,
       "tokens_out": 17,
       "reasons": [
         "kb_gap",
@@ -1028,7 +1028,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1958,
+      "tokens_in": 2044,
       "tokens_out": 17,
       "reasons": [
         "kb_gap",
@@ -1052,7 +1052,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1958,
+      "tokens_in": 2044,
       "tokens_out": 17,
       "reasons": [
         "kb_gap",
@@ -1076,7 +1076,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1958,
+      "tokens_in": 2044,
       "tokens_out": 17,
       "reasons": [
         "kb_gap",
@@ -1100,7 +1100,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1960,
+      "tokens_in": 2046,
       "tokens_out": 17,
       "reasons": [
         "hard_rule:trading_advice"
@@ -1123,7 +1123,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1967,
+      "tokens_in": 2053,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -1146,7 +1146,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1955,
+      "tokens_in": 2041,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -1169,7 +1169,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1963,
+      "tokens_in": 2049,
       "tokens_out": 43,
       "reasons": []
     },
@@ -1190,7 +1190,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1943,
+      "tokens_in": 2029,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -1213,7 +1213,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1957,
+      "tokens_in": 2043,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -1236,7 +1236,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1948,
+      "tokens_in": 2034,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -1259,7 +1259,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1953,
+      "tokens_in": 2039,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -1282,7 +1282,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1958,
+      "tokens_in": 2044,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -1305,7 +1305,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1950,
+      "tokens_in": 2036,
       "tokens_out": 22,
       "reasons": [
         "kb_gap"
@@ -1328,7 +1328,7 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1952,
+      "tokens_in": 2038,
       "tokens_out": 52,
       "reasons": []
     },
@@ -1349,10 +1349,56 @@
       "violations": [],
       "cost_usd": 0.0,
       "latency_ms": 0,
-      "tokens_in": 1962,
+      "tokens_in": 2048,
       "tokens_out": 47,
       "reasons": [
         "account_lookup_required"
+      ]
+    },
+    {
+      "ticket_id": "T059",
+      "group": "kb_gap",
+      "decision": "needs_human",
+      "category_ok": true,
+      "language_ok": true,
+      "urgency_ok": true,
+      "sentiment_ok": true,
+      "decision_ok": true,
+      "gold_abstain": false,
+      "model_abstained": false,
+      "final_abstained": false,
+      "raw_citations": 1,
+      "raw_citations_valid": 1,
+      "violations": [],
+      "cost_usd": 0.0,
+      "latency_ms": 0,
+      "tokens_in": 2040,
+      "tokens_out": 51,
+      "reasons": [
+        "partial_answer"
+      ]
+    },
+    {
+      "ticket_id": "T060",
+      "group": "kb_gap",
+      "decision": "needs_human",
+      "category_ok": true,
+      "language_ok": true,
+      "urgency_ok": true,
+      "sentiment_ok": true,
+      "decision_ok": true,
+      "gold_abstain": false,
+      "model_abstained": false,
+      "final_abstained": false,
+      "raw_citations": 1,
+      "raw_citations_valid": 1,
+      "violations": [],
+      "cost_usd": 0.0,
+      "latency_ms": 0,
+      "tokens_in": 2041,
+      "tokens_out": 50,
+      "reasons": [
+        "partial_answer"
       ]
     }
   ],
@@ -1397,12 +1443,12 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1947,
+        "tokens_in": 2033,
         "tokens_out": 43,
         "cost_usd": 0.0,
-        "latency_ms": 3
+        "latency_ms": 4
       }
     },
     {
@@ -1435,9 +1481,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1960,
+        "tokens_in": 2046,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 1
@@ -1473,9 +1519,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1511,9 +1557,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1559,9 +1605,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1951,
+        "tokens_in": 2037,
         "tokens_out": 47,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1597,9 +1643,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1949,
+        "tokens_in": 2035,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1647,9 +1693,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 60,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1697,9 +1743,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1957,
+        "tokens_in": 2043,
         "tokens_out": 54,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1735,9 +1781,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1958,
+        "tokens_in": 2044,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1773,9 +1819,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1949,
+        "tokens_in": 2035,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1821,9 +1867,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1949,
+        "tokens_in": 2035,
         "tokens_out": 54,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1871,9 +1917,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1952,
+        "tokens_in": 2038,
         "tokens_out": 54,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1919,9 +1965,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1950,
+        "tokens_in": 2036,
         "tokens_out": 55,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -1967,9 +2013,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1952,
+        "tokens_in": 2038,
         "tokens_out": 52,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2005,9 +2051,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1947,
+        "tokens_in": 2033,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2053,9 +2099,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1951,
+        "tokens_in": 2037,
         "tokens_out": 55,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2101,9 +2147,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1952,
+        "tokens_in": 2038,
         "tokens_out": 73,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2139,9 +2185,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1951,
+        "tokens_in": 2037,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2187,9 +2233,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1950,
+        "tokens_in": 2036,
         "tokens_out": 73,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2235,9 +2281,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 73,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2273,9 +2319,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2321,9 +2367,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1950,
+        "tokens_in": 2036,
         "tokens_out": 73,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2359,9 +2405,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1951,
+        "tokens_in": 2037,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2407,9 +2453,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1949,
+        "tokens_in": 2035,
         "tokens_out": 73,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2445,9 +2491,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1951,
+        "tokens_in": 2037,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2483,9 +2529,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1948,
+        "tokens_in": 2034,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2521,9 +2567,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1948,
+        "tokens_in": 2034,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2559,9 +2605,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1954,
+        "tokens_in": 2040,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2597,9 +2643,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1950,
+        "tokens_in": 2036,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2635,9 +2681,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2673,9 +2719,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1951,
+        "tokens_in": 2037,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2711,9 +2757,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1951,
+        "tokens_in": 2037,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2749,9 +2795,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1948,
+        "tokens_in": 2034,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2787,9 +2833,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1956,
+        "tokens_in": 2042,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2825,9 +2871,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 17,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2863,9 +2909,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 17,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2902,9 +2948,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1954,
+        "tokens_in": 2040,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2940,9 +2986,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1952,
+        "tokens_in": 2038,
         "tokens_out": 17,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -2978,9 +3024,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1952,
+        "tokens_in": 2038,
         "tokens_out": 17,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3017,9 +3063,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3056,9 +3102,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1959,
+        "tokens_in": 2045,
         "tokens_out": 17,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3094,9 +3140,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3133,9 +3179,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1955,
+        "tokens_in": 2041,
         "tokens_out": 17,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3172,9 +3218,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1958,
+        "tokens_in": 2044,
         "tokens_out": 17,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3211,9 +3257,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1958,
+        "tokens_in": 2044,
         "tokens_out": 17,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3250,9 +3296,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1958,
+        "tokens_in": 2044,
         "tokens_out": 17,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3288,9 +3334,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1960,
+        "tokens_in": 2046,
         "tokens_out": 17,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3326,9 +3372,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1967,
+        "tokens_in": 2053,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3364,9 +3410,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1955,
+        "tokens_in": 2041,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3412,9 +3458,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1963,
+        "tokens_in": 2049,
         "tokens_out": 43,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3450,9 +3496,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1943,
+        "tokens_in": 2029,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3488,9 +3534,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1957,
+        "tokens_in": 2043,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3526,9 +3572,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1948,
+        "tokens_in": 2034,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3564,9 +3610,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1953,
+        "tokens_in": 2039,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3602,9 +3648,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1958,
+        "tokens_in": 2044,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3640,9 +3686,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1950,
+        "tokens_in": 2036,
         "tokens_out": 22,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3688,9 +3734,9 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1952,
+        "tokens_in": 2038,
         "tokens_out": 52,
         "cost_usd": 0.0,
         "latency_ms": 0
@@ -3738,10 +3784,110 @@
       },
       "usage": {
         "model": "mock-1",
-        "prompt_version": "draft_v2",
+        "prompt_version": "draft_v3",
         "kb_version": "4ef110224808",
-        "tokens_in": 1962,
+        "tokens_in": 2048,
         "tokens_out": 47,
+        "cost_usd": 0.0,
+        "latency_ms": 0
+      }
+    },
+    {
+      "ticket_id": "T059",
+      "classification": {
+        "category": "verification",
+        "urgency": "low",
+        "language": "ru",
+        "sentiment": "neutral"
+      },
+      "decision": "needs_human",
+      "reasons": [
+        "partial_answer"
+      ],
+      "draft": "Здравствуйте! Открытие счёта и проверка документов завершаются в течение 48 часов.",
+      "citations": [
+        {
+          "page": "how-to-open-an-account",
+          "quote": "Account opening and document verification will be completed within 48 hours.",
+          "url": "https://valetax.com/how-to-open-an-account/"
+        }
+      ],
+      "kb_gap": "KB does not say whether this can be sped up on request.",
+      "requires_account_lookup": false,
+      "raw_model_output": {
+        "classification": {
+          "category": "verification",
+          "urgency": "low",
+          "language": "ru",
+          "sentiment": "neutral"
+        },
+        "draft": "Здравствуйте! Открытие счёта и проверка документов завершаются в течение 48 часов.",
+        "citations": [
+          {
+            "page": "how-to-open-an-account",
+            "quote": "Account opening and document verification will be completed within 48 hours.",
+            "url": null
+          }
+        ],
+        "kb_gap": "KB does not say whether this can be sped up on request.",
+        "requires_account_lookup": false
+      },
+      "usage": {
+        "model": "mock-1",
+        "prompt_version": "draft_v3",
+        "kb_version": "4ef110224808",
+        "tokens_in": 2040,
+        "tokens_out": 51,
+        "cost_usd": 0.0,
+        "latency_ms": 0
+      }
+    },
+    {
+      "ticket_id": "T060",
+      "classification": {
+        "category": "verification",
+        "urgency": "low",
+        "language": "en",
+        "sentiment": "neutral"
+      },
+      "decision": "needs_human",
+      "reasons": [
+        "partial_answer"
+      ],
+      "draft": "Account opening and document verification are completed within 48 hours.",
+      "citations": [
+        {
+          "page": "how-to-open-an-account",
+          "quote": "Account opening and document verification will be completed within 48 hours.",
+          "url": "https://valetax.com/how-to-open-an-account/"
+        }
+      ],
+      "kb_gap": "KB does not say whether this can be sped up on request.",
+      "requires_account_lookup": false,
+      "raw_model_output": {
+        "classification": {
+          "category": "verification",
+          "urgency": "low",
+          "language": "en",
+          "sentiment": "neutral"
+        },
+        "draft": "Account opening and document verification are completed within 48 hours.",
+        "citations": [
+          {
+            "page": "how-to-open-an-account",
+            "quote": "Account opening and document verification will be completed within 48 hours.",
+            "url": null
+          }
+        ],
+        "kb_gap": "KB does not say whether this can be sped up on request.",
+        "requires_account_lookup": false
+      },
+      "usage": {
+        "model": "mock-1",
+        "prompt_version": "draft_v3",
+        "kb_version": "4ef110224808",
+        "tokens_in": 2041,
+        "tokens_out": 50,
         "cost_usd": 0.0,
         "latency_ms": 0
       }

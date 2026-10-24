@@ -60,7 +60,8 @@ class ModelOutput(BaseModel):
     citations: list[Citation] = Field(default_factory=list)
     kb_gap: str | None = Field(
         default=None,
-        description="When draft is null: one sentence on what the KB is missing.",
+        description="One sentence on what the KB is missing: when draft is null, or next to a draft that "
+        "answers only part of the question.",
     )
     requires_account_lookup: bool = Field(
         default=False,

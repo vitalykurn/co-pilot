@@ -4,17 +4,19 @@
   "language_acc": 1.0,
   "urgency_acc": 0.914,
   "sentiment_acc": 0.983,
-  "decision_acc": 0.897,
+  "decision_acc": 0.879,
   "abstain_recall_on_kb_gaps": 0.429,
   "abstain_precision": 0.667,
   "raw_citation_validity": 0.958,
   "coverage_all": 0.534,
   "coverage_answerable": 0.923,
   "coverage_in_scope": 0.714,
-  "violations_total": 5,
-  "tickets_with_violations": 3,
+  "violations_total": 7,
+  "tickets_with_violations": 4,
   "violations_by_type": {
-    "forbidden_phrase": 5
+    "internal_reference": 1,
+    "forbidden_phrase": 5,
+    "followup_promise": 1
   },
   "decisions": {
     "draft_ready": 31,

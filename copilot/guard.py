@@ -7,8 +7,10 @@ The model proposes; these functions decide what reaches the agent:
 2. Grounding. Every citation must be a literal substring of a KB page. Every
    number in the draft must appear in a valid citation or in the ticket itself.
    A draft that fails either check is dropped and the ticket goes to a person.
-3. Routing. Negative + high urgency, account lookups and unsupported languages
-   go to a person even when the draft is fine.
+   A draft that promises a later action or mentions the knowledge base is dropped
+   too: nothing follows up on a sent draft.
+3. Routing. Partial answers, negative + high urgency, account lookups and
+   unsupported languages go to a person even when the draft is fine.
 
 A dropped draft is a soft failure: the ticket is not lost, the agent gets the
 classification, the reasons, and whatever the model said in `kb_gap`.
@@ -51,6 +53,33 @@ ADVICE_IN_DRAFT = re.compile(
     r"(buy|sell) (now|today|before)|will (rise|fall|go up|go down)|price target|"
     r"рекоменду\w* (вам )?(купить|продать|выбрать плечо|открыть)|советую (купить|продать)|"
     r"le recomendamos (comprar|vender|usar un apalancamiento))\b",
+    re.I,
+)
+
+# A promise of a later action or reply. Nothing in the system follows up on a sent draft,
+# so the customer would wait for an answer nobody owes them.
+FOLLOWUP_PROMISE = re.compile(
+    r"\b(?:(?:our |the )?(?:support )?team (?:will|is going to|shall) (?:check|confirm|review|look into|verify|clarify|follow up|get back|update|contact|reach out|let you know|inform)|"
+    r"we(?:'ll| will| are going to| shall) (?:check|confirm|review|look into|verify|clarify|follow up|get back|update you|contact you|reach out|let you know|inform you|find out|ask)|"
+    r"(?:get|come) back to you|follow up with you|keep you (?:posted|updated|informed))\b"
+    # Russian
+    r"|\b(?:уточним|уточню|проверим|выясним|сообщим|свяжемся|вернёмся к вам|вернемся к вам|ответим вам позже|"
+    r"передадим (?:ваш )?(?:вопрос|запрос)|будем держать вас в курсе|"
+    r"(?:команда|специалисты?|коллеги) (?:уточн|провер|свяж|сообщ|ответ|выясн)\w*)"
+    # Spanish
+    r"|\b(?:le informaremos|le confirmaremos|confirmaremos|verificaremos|lo revisaremos|nos pondremos en contacto|"
+    r"le contactaremos|le responderemos|el equipo (?:lo )?(?:revisará|confirmará|verificará))\b"
+    # Indonesian
+    r"|\b(?:kami akan (?:cek|mengecek|memeriksa|menginformasikan|menghubungi|mengonfirmasi|memberi tahu|memberitahu)|"
+    r"tim (?:kami )?akan (?:memeriksa|mengecek|mengonfirmasi))\b"
+    # Portuguese
+    r"|\b(?:vamos verificar|verificaremos|entraremos em contato|retornaremos|a equipe (?:irá|vai) verificar)\b",
+    re.I,
+)
+
+# The customer does not know the knowledge base exists; "the KB does not say" reads as "nobody knows".
+INTERNAL_REF = re.compile(
+    r"knowledge[ -]base|баз(?:а|е|ы|у|ой) знаний|base de conocimientos?|basis pengetahuan|base de conhecimentos?",
     re.I,
 )
 
@@ -167,6 +196,10 @@ def apply(ticket: Ticket, out: ModelOutput | None, kb: KnowledgeBase, cfg: Guard
                 failures.append("draft_dropped:uncited_numbers:" + ",".join(missing))
         if ADVICE_IN_DRAFT.search(draft):
             failures.append("draft_dropped:advice_language")
+        if FOLLOWUP_PROMISE.search(draft):
+            failures.append("draft_dropped:followup_promise")
+        if INTERNAL_REF.search(draft):
+            failures.append("draft_dropped:internal_reference")
         if failures:  # all checks run so the log shows every problem, not just the first
             reasons.extend(failures)
             draft = None
@@ -182,6 +215,9 @@ def apply(ticket: Ticket, out: ModelOutput | None, kb: KnowledgeBase, cfg: Guard
     # 4. Routing.
     if draft is None:
         return GuardOutcome("needs_human", reasons, None, [])
+    if out.kb_gap:
+        reasons.append("partial_answer")
+        return GuardOutcome("needs_human", reasons, draft, citations)
     if out.requires_account_lookup:
         reasons.append("account_lookup_required")
         return GuardOutcome("needs_human", reasons, draft, citations)

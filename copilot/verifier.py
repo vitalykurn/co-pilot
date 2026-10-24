@@ -20,7 +20,7 @@ from .kb import ROOT
 from .providers import Provider
 from .schema import Citation
 
-PROMPT = ROOT / "prompts" / "verify_v1.md"
+PROMPT = ROOT / "prompts" / "verify_v2.md"
 _FENCE = re.compile(r"^```(?:json)?\s*|\s*```$", re.M)
 
 

@@ -31,6 +31,24 @@ def normalize(text: str) -> str:
     return _WS.sub(" ", text.translate(_QUOTES)).strip().lower()
 
 
+_QUOTE_CHARS = "'\u2018\u2019\"\u201c\u201d"
+
+
+def locate(body: str, quote: str) -> tuple[int, int] | None:
+    """Character span of `quote` in `body`, matching the way `find_quote` does.
+
+    Whitespace runs and straight-vs-curly quotes are interchangeable, case is
+    ignored, nothing else is. Used to highlight a citation on the page.
+    """
+    tokens = quote.split()
+    if not tokens:
+        return None
+    any_quote = "[" + re.escape(_QUOTE_CHARS) + "]"
+    parts = ["".join(any_quote if ch in _QUOTE_CHARS else re.escape(ch) for ch in tok) for tok in tokens]
+    m = re.search(r"\s+".join(parts), body, re.I)
+    return (m.start(), m.end()) if m else None
+
+
 @dataclass(frozen=True)
 class Page:
     slug: str

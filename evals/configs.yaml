@@ -4,7 +4,8 @@
 #
 # Qwen configs go through the OpenAI-compatible DashScope endpoint.
 # D goes through the Anthropic Messages API directly (ANTHROPIC_API_KEY).
-# prompt_version defaults to draft_v2 (see prompts/); draft_v1 is kept for the before/after.
+# prompt_version defaults to draft_v3 (see prompts/). Saved live results A-F were produced with
+# draft_v2 (B v1 with draft_v1); each results file records the prompt version it ran with.
 
 mock:
   description: Deterministic mock, no network. Smoke test for the harness and CI.

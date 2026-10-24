@@ -1,8 +1,8 @@
 """Run the labelled ticket set through one configuration and score it.
 
 All checks are deterministic: labels compare against gold, citations against
-the KB snapshot, numbers against citations, forbidden phrases against the
-draft. No LLM judge. Wording quality of drafts is reviewed by hand on a sample
+the KB snapshot, numbers against citations, forbidden phrases, follow-up
+promises and mentions of the knowledge base against the draft. No LLM judge. Wording quality of drafts is reviewed by hand on a sample
 and noted in the results file, not scored here.
 
 Usage: python -m evals.run_eval --config mock [--limit N]
@@ -85,6 +85,11 @@ def score_one(row: dict, res: Result, kb: KnowledgeBase) -> dict:
             v.append("advice_language")
         if exp.get("pages") and res.citations and not {c.page for c in res.citations} <= set(exp["pages"]):
             v.append("cited_unexpected_page")
+    if draft and res.decision != "declined":
+        if guard.FOLLOWUP_PROMISE.search(draft):
+            v.append("followup_promise")
+        if guard.INTERNAL_REF.search(draft):
+            v.append("internal_reference")
     if draft:
         low = draft.lower()
         for phrase in exp.get("forbidden_in_draft", []):
@@ -154,7 +159,7 @@ def run(config_name: str, limit: int | None = None, out_dir: Path = RESULTS) -> 
         v = cfg.get("verifier") or {}
         v_extra = {k: v[k] for k in ("base_url", "api_key_env") if k in v}
         verifier = get_provider(v.get("provider", cfg["provider"]), v.get("model", cfg.get("model")), **(v_extra or provider_kwargs))
-    copilot = Copilot(provider, kb, prompt_version=cfg.get("prompt_version", "draft_v2"), guard_config=gcfg, verifier=verifier)
+    copilot = Copilot(provider, kb, prompt_version=cfg.get("prompt_version", "draft_v3"), guard_config=gcfg, verifier=verifier)
 
     rows = load_tickets(limit)
     scores, results = [], []

@@ -21,5 +21,8 @@ dev = ["pytest>=8.0"]
 [tool.setuptools.packages.find]
 include = ["copilot*"]
 
+[tool.setuptools.package-data]
+copilot = ["static/*.html"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

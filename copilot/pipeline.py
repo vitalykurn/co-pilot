@@ -45,7 +45,7 @@ class Copilot:
         self,
         provider: Provider,
         kb: KnowledgeBase | None = None,
-        prompt_version: str = "draft_v2",
+        prompt_version: str = "draft_v3",
         guard_config: guard.GuardConfig | None = None,
         log_path: Path | None = None,
         verifier: Provider | None = None,
