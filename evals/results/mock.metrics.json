@@ -10,6 +10,7 @@
   "raw_citation_validity": 1.0,
   "coverage_all": 0.224,
   "coverage_answerable": 0.462,
+  "coverage_in_scope": 0.286,
   "violations_total": 1,
   "violations_by_type": {
     "cited_unexpected_page": 1

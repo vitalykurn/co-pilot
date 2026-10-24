@@ -1,0 +1,21 @@
+# Inputs to the business case. Every number here is an assumption until the
+# shadow week replaces it with a measurement. Change a number, re-run
+# `python -m evals.business_case`, the page recomputes.
+
+tickets_per_month: 10000
+
+# Share of tickets about the four KB topics (deposit, withdrawal, account opening, verification).
+# The brief says the team answers "repetitive questions" on these; 0.6 is a placeholder.
+share_in_scope: 0.60
+
+# Agent handling time, minutes per ticket.
+agent_minutes_without_copilot: 6.0   # read, look up the help page, write, send
+agent_minutes_with_draft: 2.0        # read draft + citations, edit if needed, send
+agent_minutes_classified_only: 5.0   # no draft, but category/urgency/language/reasons already set
+
+# Fully loaded cost of one agent hour, USD. Parameter, not a fact about the company.
+agent_hourly_cost_usd: 10.0
+
+# Reference cost of one wrong statement reaching a customer (invented fee, timeline, or trading advice):
+# refunds, complaint handling, compliance time. Used only for the sensitivity line, not in the net figure.
+incident_cost_usd: 500.0

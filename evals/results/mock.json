@@ -10,7 +10,7 @@
     },
     "prompt_version": "draft_v1",
     "kb_version": "4ef110224808",
-    "run_at": "2026-10-24T03:35:32+00:00",
+    "run_at": "2026-10-24T03:37:02+00:00",
     "metrics": {
       "tickets": 58,
       "category_acc": 0.724,
@@ -23,6 +23,7 @@
       "raw_citation_validity": 1.0,
       "coverage_all": 0.224,
       "coverage_answerable": 0.462,
+      "coverage_in_scope": 0.286,
       "violations_total": 1,
       "violations_by_type": {
         "cited_unexpected_page": 1

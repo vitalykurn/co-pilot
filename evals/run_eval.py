@@ -104,6 +104,8 @@ def aggregate(scores: list[dict]) -> dict:
 
     gold_abstain = [s for s in scores if s["gold_abstain"]]
     answerable = [s for s in scores if s["group"] == "answerable"]
+    # In-scope = the four KB topics as they arrive: answerable, KB gaps and account-specific cases together.
+    in_scope = [s for s in scores if s["group"] in ("answerable", "kb_gap", "account_lookup")]
     model_abstained = [s for s in scores if s["model_abstained"] and s["group"] in ("answerable", "kb_gap")]
 
     abstain_recall = round(sum(1 for s in gold_abstain if s["model_abstained"]) / len(gold_abstain), 3) if gold_abstain else None
@@ -123,6 +125,7 @@ def aggregate(scores: list[dict]) -> dict:
         "raw_citation_validity": round(sum(s["raw_citations_valid"] for s in scores) / raw_cits, 3) if raw_cits else None,
         "coverage_all": round(sum(1 for s in scores if s["decision"] == "draft_ready") / n, 3),
         "coverage_answerable": round(sum(1 for s in answerable if s["decision"] == "draft_ready") / len(answerable), 3) if answerable else None,
+        "coverage_in_scope": round(sum(1 for s in in_scope if s["decision"] == "draft_ready") / len(in_scope), 3) if in_scope else None,
         "violations_total": sum(len(s["violations"]) for s in scores),
         "violations_by_type": dict(Counter(v.split(":")[0] for s in scores for v in s["violations"])),
         "decisions": dict(Counter(s["decision"] for s in scores)),
