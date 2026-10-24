@@ -1,0 +1,21 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[dev]"
+      - run: python -m pytest -q
+      # Harness smoke test on the deterministic mock: no keys, no network.
+      - run: python cli.py eval --config mock
+      # Prompt or guard drift shows up here as a changed mock result file.
+      - run: git diff --exit-code -- evals/results/mock.metrics.json
