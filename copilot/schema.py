@@ -62,6 +62,10 @@ class ModelOutput(BaseModel):
         default=None,
         description="When draft is null: one sentence on what the KB is missing.",
     )
+    requires_account_lookup: bool = Field(
+        default=False,
+        description="True when a correct answer depends on this customer's account or transaction state.",
+    )
 
 
 class Usage(BaseModel):
@@ -87,4 +91,9 @@ class Result(BaseModel):
     draft: str | None = None
     citations: list[Citation] = Field(default_factory=list)
     kb_gap: str | None = None
+    requires_account_lookup: bool = False
+    raw_model_output: ModelOutput | None = Field(
+        default=None,
+        description="What the model returned before the guards ran. Kept for eval and audit, not shown to agents.",
+    )
     usage: Usage

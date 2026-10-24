@@ -24,7 +24,7 @@ _RULES: list[tuple[str, str, str | None, str | None, str | None]] = [
         None,
     ),
     (r"\b(stole|scam|fraud|complain|complaint|lawyer|regulator|unacceptable)\b", "complaint", None, None, None),
-    (r"\b(rejected|declined|frozen|blocked|suspended|aml|source of funds)\b.*\b(document|verification|kyc|account)\b|\b(document|verification|kyc)\b.*\b(rejected|declined)\b", "kyc_aml", None, None, None),
+    (r"\b(rejected|declined|frozen|blocked|suspended|aml|source of funds|unfreeze|unblock|lift the hold)\b.*\b(document|verification|kyc|account)\b|\b(document|verification|kyc)\b.*\b(rejected|declined)\b", "kyc_aml", None, None, None),
     (
         r"\b(minimum deposit|min deposit)\b",
         "deposit",
@@ -47,7 +47,7 @@ _RULES: list[tuple[str, str, str | None, str | None, str | None]] = [
         "A 'pending' status means your withdrawal request is in the queue and being processed. You will be notified once it is approved.",
     ),
     (
-        r"\bwithdraw\w*\b.*\b(how long|when|days|take|fee|commission|minimum)\b",
+        r"(?=.*\bwithdraw\w*\b)(?=.*\b(how long|days|take|fee|fees|commission|minimum|limit|different bank)\b)",
         "withdrawal",
         None,
         None,
@@ -91,9 +91,17 @@ _RULES: list[tuple[str, str, str | None, str | None, str | None]] = [
     ),
 ]
 
-_NEGATIVE = re.compile(r"\b(angry|stole|scam|unacceptable|still|again|urgent|asap|immediately|!!)\b", re.I)
+_NEGATIVE = re.compile(r"\b(angry|stole|scam|unacceptable|still|again|urgent|asap|immediately|rude|мошенничество|заблокировали)\b|!!", re.I)
+_ACCOUNT_LOOKUP = re.compile(
+    r"\b(my (deposit|withdrawal|balance|account) .{0,40}(not|hasn't|has not|only|nothing|arrived|showing|pending|rejected)|"
+    r"(not|hasn't|has not) (arrived|updated|showed|shown)|nothing has arrived|only \$?\d+ showed|still pending|was rejected)\b",
+    re.I | re.S,
+)
 _CYRILLIC = re.compile(r"[\u0400-\u04ff]")
 _ARABIC = re.compile(r"[\u0600-\u06ff]")
+_SPANISH = re.compile(r"[¿¡]|\b(hola|cuál|dónde|puedo|retirar|cuenta)\b", re.I)
+_INDONESIAN = re.compile(r"\b(bagaimana|apakah|saya|akun|sebaiknya)\b", re.I)
+_PORTUGUESE = re.compile(r"\b(olá|quanto|demora|depósito|conta)\b", re.I)
 
 
 class MockProvider(Provider):
@@ -108,7 +116,18 @@ class MockProvider(Provider):
             if re.search(pattern, ticket, re.I | re.S):
                 category, page, quote, draft = cat, pg, q, d
                 break
-        language = "ru" if _CYRILLIC.search(user) else "ar" if _ARABIC.search(user) else "en"
+        if _CYRILLIC.search(user):
+            language = "ru"
+        elif _ARABIC.search(user):
+            language = "ar"
+        elif _SPANISH.search(user):
+            language = "es"
+        elif _INDONESIAN.search(user):
+            language = "id"
+        elif _PORTUGUESE.search(user):
+            language = "pt"
+        else:
+            language = "en"
         negative = bool(_NEGATIVE.search(user)) or category in ("complaint", "kyc_aml")
         out = {
             "classification": {
@@ -120,6 +139,7 @@ class MockProvider(Provider):
             "draft": draft,
             "citations": [{"page": page, "quote": quote}] if quote else [],
             "kb_gap": None if draft or category in ("trading_advice", "complaint", "kyc_aml") else "KB does not cover this question.",
+            "requires_account_lookup": bool(_ACCOUNT_LOOKUP.search(user)) and category in ("deposit", "withdrawal"),
         }
         text = json.dumps(out, ensure_ascii=False)
         return LLMResponse(
