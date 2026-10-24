@@ -21,6 +21,7 @@ from pathlib import Path
 import yaml
 
 from copilot import guard
+from copilot.env import load_env
 from copilot.kb import KnowledgeBase
 from copilot.pipeline import Copilot
 from copilot.providers import get_provider
@@ -127,6 +128,7 @@ def aggregate(scores: list[dict]) -> dict:
         "coverage_answerable": round(sum(1 for s in answerable if s["decision"] == "draft_ready") / len(answerable), 3) if answerable else None,
         "coverage_in_scope": round(sum(1 for s in in_scope if s["decision"] == "draft_ready") / len(in_scope), 3) if in_scope else None,
         "violations_total": sum(len(s["violations"]) for s in scores),
+        "tickets_with_violations": sum(1 for s in scores if s["violations"]),
         "violations_by_type": dict(Counter(v.split(":")[0] for s in scores for v in s["violations"])),
         "decisions": dict(Counter(s["decision"] for s in scores)),
         "cost_usd_total": round(sum(s["cost_usd"] for s in scores), 4),
@@ -142,10 +144,17 @@ def run(config_name: str, limit: int | None = None, out_dir: Path = RESULTS) -> 
     if config_name not in cfgs:
         raise SystemExit(f"unknown config {config_name!r}; available: {', '.join(cfgs)}")
     cfg = cfgs[config_name]
+    load_env()
     kb = KnowledgeBase.load()
-    provider = get_provider(cfg["provider"], cfg.get("model"))
+    provider_kwargs = {k: cfg[k] for k in ("base_url", "api_key_env") if k in cfg}
+    provider = get_provider(cfg["provider"], cfg.get("model"), **provider_kwargs)
     gcfg = guard.GuardConfig(verify_citations=cfg["verify_citations"], verify_numbers=cfg["verify_numbers"])
-    copilot = Copilot(provider, kb, prompt_version=cfg.get("prompt_version", "draft_v1"), guard_config=gcfg)
+    verifier = None
+    if cfg.get("verify_claims"):
+        v = cfg.get("verifier") or {}
+        v_extra = {k: v[k] for k in ("base_url", "api_key_env") if k in v}
+        verifier = get_provider(v.get("provider", cfg["provider"]), v.get("model", cfg.get("model")), **(v_extra or provider_kwargs))
+    copilot = Copilot(provider, kb, prompt_version=cfg.get("prompt_version", "draft_v2"), guard_config=gcfg, verifier=verifier)
 
     rows = load_tickets(limit)
     scores, results = [], []
@@ -164,6 +173,12 @@ def run(config_name: str, limit: int | None = None, out_dir: Path = RESULTS) -> 
         "run_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "metrics": aggregate(scores),
     }
+    _write(out_dir, config_name, summary, scores, results)
+    print(json.dumps(summary["metrics"], indent=2))
+    return summary
+
+
+def _write(out_dir: Path, config_name: str, summary: dict, scores: list[dict], results: list[dict]) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / f"{config_name}.json").write_text(
         json.dumps({"summary": summary, "scores": scores, "results": results}, indent=2, ensure_ascii=False) + "\n",
@@ -173,6 +188,24 @@ def run(config_name: str, limit: int | None = None, out_dir: Path = RESULTS) -> 
     stable = {k: v for k, v in summary["metrics"].items() if k != "latency_ms_avg"}
     stable["prompt_version"], stable["kb_version"] = summary["prompt_version"], summary["kb_version"]
     (out_dir / f"{config_name}.metrics.json").write_text(json.dumps(stable, indent=2) + "\n", encoding="utf-8")
+
+
+def rescore(config_name: str, out_dir: Path = RESULTS) -> dict:
+    """Re-score saved model outputs against the current labels and scorer. No API calls.
+
+    Use after fixing a label or the scoring code; the model outputs themselves are unchanged.
+    """
+    path = out_dir / f"{config_name}.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    kb = KnowledgeBase.load()
+    rows = {r["ticket_id"]: r for r in load_tickets()}
+    results = data["results"]
+    scores = [score_one(rows[r["ticket_id"]], Result.model_validate(r), kb) for r in results if r["ticket_id"] in rows]
+    summary = data["summary"]
+    summary["metrics"] = aggregate(scores)
+    summary["rescored_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    _write(out_dir, config_name, summary, scores, results)
+    print(f"{config_name}: rescored {len(scores)} tickets")
     print(json.dumps(summary["metrics"], indent=2))
     return summary
 
@@ -181,8 +214,12 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="mock")
     ap.add_argument("--limit", type=int)
+    ap.add_argument("--rescore", action="store_true", help="re-score saved outputs with current labels, no API calls")
     args = ap.parse_args()
-    run(args.config, args.limit)
+    if args.rescore:
+        rescore(args.config)
+    else:
+        run(args.config, args.limit)
     return 0
 
 

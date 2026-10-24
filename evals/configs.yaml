@@ -1,6 +1,11 @@
 # Configurations compared in the eval and in the business case.
 # Hard rules (trading advice -> decline, complaint/KYC/AML -> human) are always on.
 # What varies: model tier and whether the code-level grounding checks run.
+#
+# All live models are reached through OpenAI-compatible endpoints; the provider
+# code is the same, only base_url / api_key_env / model differ.
+# prompt_version defaults to draft_v2 (see prompts/); draft_v1 is kept for the before/after.
+
 mock:
   description: Deterministic mock, no network. Smoke test for the harness and CI.
   provider: mock
@@ -9,22 +14,73 @@ mock:
   verify_numbers: true
 
 A_cheap_noguard:
-  description: Cheap model, full KB in context, model output trusted as-is (no citation / number checks).
+  description: Cheap model (Qwen Flash), full KB in context, model output trusted as-is (no citation / number checks).
   provider: openai
-  model: gpt-4o-mini
+  model: qwen-flash
+  base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  api_key_env: ALICLOUD_API_KEY
   verify_citations: false
   verify_numbers: false
+
+B_cheap_guard_v1:
+  description: B with the first prompt version, kept to show what the eval changed in the prompt.
+  provider: openai
+  model: qwen-flash
+  base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  api_key_env: ALICLOUD_API_KEY
+  prompt_version: draft_v1
+  verify_citations: true
+  verify_numbers: true
 
 B_cheap_guard:
   description: Same cheap model with code-level citation and number verification.
   provider: openai
-  model: gpt-4o-mini
+  model: qwen-flash
+  base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  api_key_env: ALICLOUD_API_KEY
   verify_citations: true
   verify_numbers: true
 
 C_strong_guard:
-  description: Stronger model with the same verification.
-  provider: anthropic
-  model: claude-sonnet-4-5
+  description: Stronger model from the same vendor (Qwen Max) with the same verification.
+  provider: openai
+  model: qwen-max
+  base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  api_key_env: ALICLOUD_API_KEY
   verify_citations: true
   verify_numbers: true
+
+D_sonnet_guard:
+  description: Cross-vendor reference (Claude Sonnet 4.5 via OpenRouter) with the same verification.
+  provider: openai
+  model: anthropic/claude-sonnet-4.5
+  base_url: https://openrouter.ai/api/v1
+  api_key_env: OPENROUTER_API_KEY
+  verify_citations: true
+  verify_numbers: true
+
+# verify_claims adds a second, narrow model call on drafts that passed the code guard:
+# "does each sentence follow from the quotes?" It is the only model-based check in the system.
+E_cheap_guard_claims:
+  description: B plus the claim-level check. Drafting on Qwen Flash, checking on Qwen Plus (the check is a short reading task, Flash was too literal on translated drafts).
+  provider: openai
+  model: qwen-flash
+  base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  api_key_env: ALICLOUD_API_KEY
+  verify_citations: true
+  verify_numbers: true
+  verify_claims: true
+  verifier:
+    model: qwen-plus
+
+F_strong_guard_claims:
+  description: C plus the same claim-level check on Qwen Plus.
+  provider: openai
+  model: qwen-max
+  base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  api_key_env: ALICLOUD_API_KEY
+  verify_citations: true
+  verify_numbers: true
+  verify_claims: true
+  verifier:
+    model: qwen-plus
