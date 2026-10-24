@@ -1,0 +1,30 @@
+# Configurations compared in the eval and in the business case.
+# Hard rules (trading advice -> decline, complaint/KYC/AML -> human) are always on.
+# What varies: model tier and whether the code-level grounding checks run.
+mock:
+  description: Deterministic mock, no network. Smoke test for the harness and CI.
+  provider: mock
+  model: mock-1
+  verify_citations: true
+  verify_numbers: true
+
+A_cheap_noguard:
+  description: Cheap model, full KB in context, model output trusted as-is (no citation / number checks).
+  provider: openai
+  model: gpt-4o-mini
+  verify_citations: false
+  verify_numbers: false
+
+B_cheap_guard:
+  description: Same cheap model with code-level citation and number verification.
+  provider: openai
+  model: gpt-4o-mini
+  verify_citations: true
+  verify_numbers: true
+
+C_strong_guard:
+  description: Stronger model with the same verification.
+  provider: anthropic
+  model: claude-sonnet-4-5
+  verify_citations: true
+  verify_numbers: true
