@@ -35,8 +35,11 @@ def compute(metrics: dict, a: dict) -> dict:
     llm_cost = tickets * metrics["cost_usd_per_ticket"]
 
     n_eval = metrics["tickets"]
-    violation_rate = metrics["violations_total"] / n_eval if n_eval else 0.0
-    expected_bad_drafts = violation_rate * tickets  # upper bound: a reviewer still sits between draft and customer
+    bad_tickets = metrics.get("tickets_with_violations", metrics["violations_total"])
+    violation_rate = bad_tickets / n_eval if n_eval else 0.0
+    # Upper bound twice over: the eval mix is deliberately adversarial (a quarter of tickets are KB gaps),
+    # and an agent still reviews every draft before it reaches a customer.
+    expected_bad_drafts = violation_rate * tickets
 
     return {
         "coverage_in_scope": coverage,
@@ -45,11 +48,12 @@ def compute(metrics: dict, a: dict) -> dict:
         "agent_savings_usd": round(savings),
         "llm_cost_usd": round(llm_cost, 2),
         "net_usd": round(savings - llm_cost),
-        "violations_in_eval": metrics["violations_total"],
+        "violations_in_eval": bad_tickets,
         "violation_rate": round(violation_rate, 3),
         "bad_drafts_per_month_upper": round(expected_bad_drafts),
         "incident_exposure_usd": round(expected_bad_drafts * a["incident_cost_usd"]),
         "cost_per_ticket_usd": metrics["cost_usd_per_ticket"],
+        "eval_tickets": n_eval,
     }
 
 
@@ -59,7 +63,8 @@ def render(rows: dict[str, dict], a: dict) -> str:
         f"Agent {a['agent_minutes_without_copilot']:.0f} min/ticket today, {a['agent_minutes_with_draft']:.0f} min with a draft, "
         f"{a['agent_minutes_classified_only']:.0f} min classified-only, ${a['agent_hourly_cost_usd']:.0f}/h.",
         "",
-        "| Config | Coverage in scope | Drafts / mo | Hours saved / mo | Agent savings | LLM cost / mo | Net / mo | Violations in eval | Bad drafts / mo (upper) | Exposure at $%d/incident |" % a["incident_cost_usd"],
+        "| Config | Coverage in scope | Drafts / mo | Hours saved / mo | Agent savings | LLM cost / mo | Net / mo | Tickets with a violation (of %d) | Bad drafts / mo (upper bound) | Exposure at $%d/incident |"
+        % (next(iter(rows.values()))["eval_tickets"], a["incident_cost_usd"]),
         "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for name, r in rows.items():
