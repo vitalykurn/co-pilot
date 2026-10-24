@@ -2,8 +2,8 @@
 # Hard rules (trading advice -> decline, complaint/KYC/AML -> human) are always on.
 # What varies: model tier and whether the code-level grounding checks run.
 #
-# All live models are reached through OpenAI-compatible endpoints; the provider
-# code is the same, only base_url / api_key_env / model differ.
+# Qwen configs go through the OpenAI-compatible DashScope endpoint.
+# D goes through the Anthropic Messages API directly (ANTHROPIC_API_KEY).
 # prompt_version defaults to draft_v2 (see prompts/); draft_v1 is kept for the before/after.
 
 mock:
@@ -51,11 +51,9 @@ C_strong_guard:
   verify_numbers: true
 
 D_sonnet_guard:
-  description: Cross-vendor reference (Claude Sonnet 4.5 via OpenRouter) with the same verification.
-  provider: openai
-  model: anthropic/claude-sonnet-4.5
-  base_url: https://openrouter.ai/api/v1
-  api_key_env: OPENROUTER_API_KEY
+  description: Same guard as C, different vendor (Claude Sonnet 5.5 via the Anthropic API).
+  provider: anthropic
+  model: claude-sonnet-5-5
   verify_citations: true
   verify_numbers: true
 
