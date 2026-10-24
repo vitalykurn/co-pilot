@@ -11,11 +11,9 @@
   "coverage_all": 0.224,
   "coverage_answerable": 0.462,
   "coverage_in_scope": 0.286,
-  "violations_total": 1,
-  "tickets_with_violations": 1,
-  "violations_by_type": {
-    "cited_unexpected_page": 1
-  },
+  "violations_total": 0,
+  "tickets_with_violations": 0,
+  "violations_by_type": {},
   "decisions": {
     "draft_ready": 13,
     "needs_human": 38,

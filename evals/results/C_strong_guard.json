@@ -42,7 +42,7 @@
       "tokens_out_avg": 114,
       "latency_ms_avg": 3831
     },
-    "rescored_at": "2026-10-24T07:35:51+00:00"
+    "rescored_at": "2026-10-24T09:25:00+00:00"
   },
   "scores": [
     {
@@ -572,8 +572,8 @@
       "raw_citations": 1,
       "raw_citations_valid": 1,
       "violations": [
-        "forbidden_phrase:within 24 hours",
-        "forbidden_phrase:24 hours"
+        "forbidden_phrase:funds should be received",
+        "forbidden_phrase:within this timeframe"
       ],
       "cost_usd": 0.004928,
       "latency_ms": 3910,

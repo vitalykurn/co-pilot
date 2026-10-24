@@ -21,6 +21,8 @@ python cli.py process --brief --text "How long does a withdrawal take?"      # m
 python cli.py process --brief --provider openai --model qwen-max \
     --base-url https://dashscope.aliyuncs.com/compatible-mode/v1 --api-key-env ALICLOUD_API_KEY \
     --text "How long does verification take? I uploaded my documents this morning."
+python cli.py process --brief --provider anthropic --model claude-sonnet-5-5 \
+    --text "How long does a withdrawal take?"                                          # needs ANTHROPIC_API_KEY
 
 python cli.py eval --config mock             # harness smoke test
 python cli.py eval --config C_strong_guard   # one live configuration; all of them are in evals/configs.yaml
@@ -67,24 +69,24 @@ Files: `copilot/schema.py` (contract), `prompts/draft_v2.md` (prompt; `draft_v1.
 
 ## What the eval says
 
-58 labelled synthetic tickets, deterministic scoring, live models reached through OpenAI-compatible endpoints (Qwen via Alibaba DashScope). Full numbers in `evals/results/*.metrics.json`; the per-ticket outputs, including what the model said before the guard, are in the `.json` files next to them.
+58 labelled synthetic tickets, deterministic scoring. Qwen through the OpenAI-compatible DashScope endpoint, Claude through the Anthropic Messages API. Full numbers in `evals/results/*.metrics.json`; the per-ticket outputs, including what the model said before the guard, are in the `.json` files next to them.
 
 | Config | Model | Code guard | Claim check | Category acc | Decision acc | Abstain recall on KB gaps | Coverage (answerable) | Tickets with a wrong statement | $ / ticket |
 |---|---|---|---|---|---|---|---|---|---|
-| A | qwen-flash | off | off | 0.81 | 0.91 | 0.64 | 0.85 | 4 (incl. 1 invented citation) | 0.00018 |
-| B v1 | qwen-flash, prompt v1 | on | off | 0.91 | 0.88 | 0.43 | 0.92 | 4 | 0.00017 |
-| B | qwen-flash | on | off | 0.88 | 0.95 | 0.64 | 0.92 | 4 | 0.00019 |
-| **C** | **qwen-max** | **on** | **off** | **0.98** | **0.98** | **0.86** | **0.88** | **1** | **0.0048** |
+| A | qwen-flash | off | off | 0.81 | 0.91 | 0.64 | 0.85 | 3 (incl. 1 invented citation) | 0.00018 |
+| B v1 | qwen-flash, prompt v1 | on | off | 0.91 | 0.90 | 0.43 | 0.92 | 3 | 0.00017 |
+| B | qwen-flash | on | off | 0.88 | 0.95 | 0.64 | 0.92 | 3 | 0.00019 |
+| C | qwen-max | on | off | 0.98 | 0.98 | 0.86 | 0.88 | 1 | 0.0048 |
+| **D** | **claude-sonnet-5-5** | **on** | **off** | **0.97** | **0.93** | **0.79** | **0.81** | **0** | **0.0107** |
 | E | qwen-flash (+ qwen-plus check) | on | on | 0.85 | 0.88 | 0.71 | 0.54 | 0 | 0.00029 |
 | F | qwen-max (+ qwen-plus check) | on | on | 0.98 | 0.90 | 0.86 | 0.50 | 0 | 0.0049 |
 
 Three things the numbers show:
 
 - **Prompt v1 → v2 was driven by the eval, not by taste.** The first live run declined factual product questions ("what is your maximum leverage") as trading advice and turned "contact support if not received within 24 hours" into a 24-hour delivery promise. v2 names both failure modes. Decision accuracy 0.88 → 0.95 and abstain recall on KB gaps 0.43 → 0.64 on the same model.
-- **The code guard cannot catch a misread quote.** Every remaining wrong statement in B and C is a valid citation used for a claim it does not make (the 24-hour threshold as a timeline; "any preferred currency" as "we do not support crypto"; "begin trading immediately" as "yes, you can trade unverified"). The stronger model makes fewer of these; the claim check (E, F) removes them at the price of half the coverage, because at its current precision it also rejects correct translations and safe restatements.
+- **The code guard cannot catch a misread quote.** The wrong statements that remain under the guard are valid citations used for a claim the quote does not make: "any preferred currency" as "we do not support crypto", "begin trading immediately" as "yes, you can trade unverified", and, on Qwen Max, the 24-hour contact-support sentence rewritten as "funds should be received within 24 hours". Quoting that sentence as the contact threshold is not counted. Sonnet (D) did the first and not the second, which is why its violation count is 0. Its two non-draft outcomes on answerable tickets were safe: one unparseable JSON, one draft dropped because it stated "48 hours" without citing that sentence.
+- **The claim check removes the misreads and half the drafts.** E and F reach 0 violations the way D does, by refusing correct translations along with the bad sentences. D gets there in one call.
 - **Zero hard-rule violations across all configurations**: every trading-advice request was declined (including the one hidden in a prompt injection), every complaint and KYC case went to a person, no draft stated a KYC outcome.
-
-Not run: a cross-vendor reference on Claude Sonnet 4.5 through OpenRouter (`D_sonnet_guard` in `configs.yaml`). The account had no paid credits; the run came back as 54 × `provider_error` → `needs_human`, which at least demonstrated that a provider outage degrades to "everything goes to a person" rather than to an exception.
 
 ## Decisions and why
 
@@ -129,5 +131,5 @@ What is in this repository is Phase 1: one Python process, one LLM call per tick
 - All tickets are synthetic and were labelled by hand. Urgency and sentiment labels are the author's judgement and are reported but not used for routing decisions beyond the negative+high rule.
 - The mock provider is a keyword matcher that exists so the harness and CI run without keys. Its scores in `evals/results/mock.*` say nothing about model quality.
 - Price per token in `copilot/providers/pricing.yaml` and every number in `evals/assumptions.yaml` are inputs, not findings.
-- Models were chosen by what keys were at hand (Alibaba DashScope). The provider layer is one OpenAI-compatible client; switching vendor is a config line, and the eval is the way to decide whether to.
+- Models were chosen by the keys at hand: Qwen on DashScope, Claude on the Anthropic API. Both sit behind the same `Provider` interface; switching is a block in `evals/configs.yaml`, and the eval is how the choice was made.
 - Built with Cursor as the agentic coding tool; commit history shows the order of work: KB snapshot and audit → contract → guards → eval set → first live run → prompt v2 and label fixes → claim check → business case.

@@ -27,10 +27,10 @@
       "coverage_all": 0.534,
       "coverage_answerable": 0.923,
       "coverage_in_scope": 0.714,
-      "violations_total": 8,
-      "tickets_with_violations": 4,
+      "violations_total": 5,
+      "tickets_with_violations": 3,
       "violations_by_type": {
-        "forbidden_phrase": 8
+        "forbidden_phrase": 5
       },
       "decisions": {
         "draft_ready": 31,
@@ -43,7 +43,7 @@
       "tokens_out_avg": 144,
       "latency_ms_avg": 2019
     },
-    "rescored_at": "2026-10-24T07:35:50+00:00"
+    "rescored_at": "2026-10-24T09:24:59+00:00"
   },
   "scores": [
     {
@@ -571,11 +571,7 @@
       "final_abstained": false,
       "raw_citations": 2,
       "raw_citations_valid": 2,
-      "violations": [
-        "forbidden_phrase:within 24 hours",
-        "forbidden_phrase:24 hours",
-        "forbidden_phrase:processed once"
-      ],
+      "violations": [],
       "cost_usd": 0.000205,
       "latency_ms": 2174,
       "tokens_in": 2292,

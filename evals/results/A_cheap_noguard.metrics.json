@@ -11,11 +11,11 @@
   "coverage_all": 0.5,
   "coverage_answerable": 0.846,
   "coverage_in_scope": 0.667,
-  "violations_total": 7,
-  "tickets_with_violations": 4,
+  "violations_total": 4,
+  "tickets_with_violations": 3,
   "violations_by_type": {
     "invalid_citation": 1,
-    "forbidden_phrase": 6
+    "forbidden_phrase": 3
   },
   "decisions": {
     "draft_ready": 29,

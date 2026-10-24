@@ -11,10 +11,10 @@
   "coverage_all": 0.534,
   "coverage_answerable": 0.923,
   "coverage_in_scope": 0.714,
-  "violations_total": 8,
-  "tickets_with_violations": 4,
+  "violations_total": 5,
+  "tickets_with_violations": 3,
   "violations_by_type": {
-    "forbidden_phrase": 8
+    "forbidden_phrase": 5
   },
   "decisions": {
     "draft_ready": 31,
