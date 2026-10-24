@@ -12,6 +12,7 @@
   "coverage_answerable": 0.462,
   "coverage_in_scope": 0.286,
   "violations_total": 1,
+  "tickets_with_violations": 1,
   "violations_by_type": {
     "cited_unexpected_page": 1
   },
@@ -22,8 +23,8 @@
   },
   "cost_usd_total": 0.0,
   "cost_usd_per_ticket": 0.0,
-  "tokens_in_avg": 1765,
+  "tokens_in_avg": 1953,
   "tokens_out_avg": 32,
-  "prompt_version": "draft_v1",
+  "prompt_version": "draft_v2",
   "kb_version": "4ef110224808"
 }

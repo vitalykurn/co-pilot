@@ -1,0 +1,30 @@
+{
+  "tickets": 58,
+  "category_acc": 0.914,
+  "language_acc": 1.0,
+  "urgency_acc": 0.914,
+  "sentiment_acc": 0.983,
+  "decision_acc": 0.897,
+  "abstain_recall_on_kb_gaps": 0.429,
+  "abstain_precision": 0.667,
+  "raw_citation_validity": 0.958,
+  "coverage_all": 0.534,
+  "coverage_answerable": 0.923,
+  "coverage_in_scope": 0.714,
+  "violations_total": 8,
+  "tickets_with_violations": 4,
+  "violations_by_type": {
+    "forbidden_phrase": 8
+  },
+  "decisions": {
+    "draft_ready": 31,
+    "needs_human": 18,
+    "declined": 9
+  },
+  "cost_usd_total": 0.01,
+  "cost_usd_per_ticket": 0.000172,
+  "tokens_in_avg": 2297,
+  "tokens_out_avg": 144,
+  "prompt_version": "draft_v1",
+  "kb_version": "4ef110224808"
+}
